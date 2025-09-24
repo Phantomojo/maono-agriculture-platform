@@ -1,0 +1,33 @@
+// Map Actions
+export const FETCH_WEATHER_DATA = 'FETCH_WEATHER_DATA';
+export const FETCH_MARKET_PRICES = 'FETCH_MARKET_PRICES';
+export const FETCH_FARMERS = 'FETCH_FARMERS';
+export const SET_SELECTED_MARKER = 'SET_SELECTED_MARKER';
+export const UPDATE_WEATHER_ALERT = 'UPDATE_WEATHER_ALERT';
+
+// Marketplace Actions
+export const FETCH_PRODUCTS = 'FETCH_PRODUCTS';
+export const FETCH_VENDORS = 'FETCH_VENDORS';
+export const ADD_TO_CART = 'ADD_TO_CART';
+export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
+export const UPDATE_CART_QUANTITY = 'UPDATE_CART_QUANTITY';
+
+// Notification Actions
+export const FETCH_NOTIFICATIONS = 'FETCH_NOTIFICATIONS';
+export const MARK_NOTIFICATION_READ = 'MARK_NOTIFICATION_READ';
+export const DELETE_NOTIFICATION = 'DELETE_NOTIFICATION';
+export const ADD_NOTIFICATION = 'ADD_NOTIFICATION';
+
+// User Actions
+export const LOGIN_USER = 'LOGIN_USER';
+export const LOGOUT_USER = 'LOGOUT_USER';
+export const UPDATE_USER_PROFILE = 'UPDATE_USER_PROFILE';
+export const FETCH_USER_DATA = 'FETCH_USER_DATA';
+
+// Community Actions
+export const FETCH_COMMUNITY_POSTS = 'FETCH_COMMUNITY_POSTS';
+export const ADD_POST = 'ADD_POST';
+export const LIKE_POST = 'LIKE_POST';
+export const COMMENT_ON_POST = 'COMMENT_ON_POST';
+export const DELETE_POST = 'DELETE_POST';
+
