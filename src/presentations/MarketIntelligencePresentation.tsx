@@ -11,8 +11,6 @@ import {
   Toolbar,
   LinearProgress,
   Chip,
-  Card,
-  CardContent,
   Table,
   TableBody,
   TableCell,
@@ -21,7 +19,6 @@ import {
   TableRow
 } from '@mui/material';
 import { 
-  ArrowBack as ArrowBackIcon,
   PlayArrow as PlayIcon,
   Pause as PauseIcon,
   VolumeOff as VolumeOffIcon,
@@ -33,7 +30,6 @@ import {
   TrendingDown as TrendingDownIcon,
   TrendingFlat as TrendingFlatIcon,
   Store as StoreIcon,
-  AttachMoney as MoneyIcon,
   LocationOn as LocationIcon,
   Assessment as AnalyticsIcon
 } from '@mui/icons-material';

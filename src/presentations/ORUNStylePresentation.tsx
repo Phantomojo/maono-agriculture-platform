@@ -33,10 +33,6 @@ import {
   Assessment as AnalyticsIcon,
   Nature as EcoIcon,
   Public as GlobeIcon,
-  AttachMoney as MoneyIcon,
-  Speed as SpeedIcon,
-  Security as SecurityIcon,
-  Group as GroupIcon,
   ArrowForward as ArrowForwardIcon,
   ArrowBack as ArrowBackIcon
 } from '@mui/icons-material';

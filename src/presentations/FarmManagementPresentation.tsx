@@ -21,13 +21,10 @@ import {
   VolumeUp as VolumeUpIcon,
   Close as CloseIcon,
   CheckCircle as CheckIcon,
-  TrendingUp as TrendingIcon,
   Agriculture as AgricultureIcon,
-  WaterDrop as WaterIcon,
   Nature as EcoIcon,
   Assessment as AnalyticsIcon,
-  LocationOn as LocationIcon,
-  Add as AddIcon
+  LocationOn as LocationIcon
 } from '@mui/icons-material';
 
 interface FarmManagementPresentationProps {

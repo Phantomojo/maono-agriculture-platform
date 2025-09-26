@@ -33,7 +33,6 @@ import ORUNStylePresentation from '../presentations/ORUNStylePresentation';
 // HomeScreen component with modern biotech-inspired design
 const HomeScreen: React.FC = () => {
   const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number } | undefined>();
-  const [showGlobe, setShowGlobe] = useState(false);
   const [currentView, setCurrentView] = useState<'home' | 'weather' | 'markets' | 'farms' | 'analytics'>('home');
   const [showPresentations, setShowPresentations] = useState(false);
   const [currentPresentation, setCurrentPresentation] = useState<string | null>(null);
@@ -309,7 +308,7 @@ const HomeScreen: React.FC = () => {
               🔄 Reset Presentation
             </Button>
             <IconButton 
-              onClick={() => setShowGlobe(true)}
+              onClick={() => setCurrentView('analytics')}
               sx={{ 
                 color: 'primary.main',
                 '&:hover': { 
@@ -367,7 +366,7 @@ const HomeScreen: React.FC = () => {
             <Button
               variant="contained"
               size="large"
-              onClick={() => setShowGlobe(true)}
+              onClick={() => setCurrentView('analytics')}
               sx={{ 
                 px: 4, 
                 py: 1.5,
