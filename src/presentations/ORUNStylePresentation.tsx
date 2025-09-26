@@ -51,6 +51,8 @@ const ORUNStylePresentation: React.FC<ORUNStylePresentationProps> = ({ onClose, 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const slides = [
@@ -282,6 +284,31 @@ const ORUNStylePresentation: React.FC<ORUNStylePresentationProps> = ({ onClose, 
     setCurrentSlide(index);
   };
 
+  // Touch navigation functions
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe && currentSlide < slides.length - 1) {
+      nextSlide();
+    }
+    if (isRightSwipe && currentSlide > 0) {
+      prevSlide();
+    }
+  };
+
   const togglePlay = () => {
     setIsPlaying(!isPlaying);
   };
@@ -356,25 +383,29 @@ const ORUNStylePresentation: React.FC<ORUNStylePresentationProps> = ({ onClose, 
   }
 
   return (
-    <Box sx={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      width: '100vw',
-      height: '100vh',
-      background: currentSlideData.background,
-      zIndex: 9999,
-      display: 'flex',
-      flexDirection: 'column',
-      overflow: 'hidden'
-    }}>
-      {/* Navigation Dots */}
+    <Box 
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      sx={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        background: currentSlideData.background,
+        zIndex: 9999,
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden'
+      }}>
+      {/* Navigation Dots - Hidden on mobile, shown on desktop */}
       <Box sx={{
         position: 'absolute',
         right: 20,
         top: '50%',
         transform: 'translateY(-50%)',
-        display: 'flex',
+        display: { xs: 'none', md: 'flex' },
         flexDirection: 'column',
         gap: 1,
         zIndex: 10
@@ -672,16 +703,17 @@ const ORUNStylePresentation: React.FC<ORUNStylePresentationProps> = ({ onClose, 
               {/* Video Placeholder */}
               <Paper sx={{
                 flex: 1,
-                background: 'rgba(0, 0, 0, 0.3)',
+                background: 'rgba(0, 0, 0, 0.5)',
                 backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                border: '2px solid rgba(255, 255, 255, 0.2)',
                 borderRadius: 3,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
                 position: 'relative',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                minHeight: { xs: '200px', md: '400px' }
               }}>
                 <Box sx={{
                   position: 'absolute',
@@ -731,34 +763,37 @@ const ORUNStylePresentation: React.FC<ORUNStylePresentationProps> = ({ onClose, 
         </Grid>
       </Container>
 
-      {/* Navigation Controls */}
+      {/* Navigation Controls - Mobile Optimized */}
       <Box sx={{
         position: 'absolute',
-        bottom: 30,
+        bottom: { xs: 20, md: 30 },
         left: '50%',
         transform: 'translateX(-50%)',
         display: 'flex',
         alignItems: 'center',
-        gap: 4,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        gap: { xs: 2, md: 4 },
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
         backdropFilter: 'blur(25px)',
         borderRadius: 6,
-        padding: '16px 32px',
-        border: '1px solid rgba(255, 255, 255, 0.15)',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+        padding: { xs: '12px 20px', md: '16px 32px' },
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        width: { xs: '90%', md: 'auto' },
+        maxWidth: '600px'
       }}>
         <Button 
           onClick={prevSlide} 
           disabled={currentSlide === 0}
           variant="outlined"
           startIcon={<ArrowBackIcon />}
+          size="small"
           sx={{ 
             borderColor: 'rgba(255, 255, 255, 0.3)',
             color: 'rgba(255, 255, 255, 0.9)',
-            px: 3,
-            py: 1.5,
+            px: { xs: 2, md: 3 },
+            py: { xs: 1, md: 1.5 },
             borderRadius: 4,
-            fontSize: '0.9rem',
+            fontSize: { xs: '0.8rem', md: '0.9rem' },
             fontWeight: 600,
             '&:hover': { 
               backgroundColor: 'rgba(125, 211, 252, 0.15)',
@@ -773,24 +808,29 @@ const ORUNStylePresentation: React.FC<ORUNStylePresentationProps> = ({ onClose, 
             }
           }}
         >
-          Previous
+          {currentSlide === 0 ? '←' : 'Previous'}
         </Button>
         
-        <Box sx={{ display: 'flex', gap: 1.5 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          gap: { xs: 1, md: 1.5 },
+          flex: 1,
+          justifyContent: 'center'
+        }}>
           {slides.map((_, index) => (
             <Box
               key={index}
               onClick={() => goToSlide(index)}
               sx={{
-                width: 12,
-                height: 12,
+                width: { xs: 10, md: 12 },
+                height: { xs: 10, md: 12 },
                 borderRadius: '50%',
-                backgroundColor: index === currentSlide ? 'primary.main' : 'rgba(255, 255, 255, 0.2)',
+                backgroundColor: index === currentSlide ? 'primary.main' : 'rgba(255, 255, 255, 0.3)',
                 cursor: 'pointer',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 border: index === currentSlide ? '2px solid rgba(125, 211, 252, 0.5)' : '2px solid transparent',
                 '&:hover': {
-                  backgroundColor: index === currentSlide ? 'primary.light' : 'rgba(255, 255, 255, 0.4)',
+                  backgroundColor: index === currentSlide ? 'primary.light' : 'rgba(255, 255, 255, 0.6)',
                   transform: 'scale(1.3)',
                   boxShadow: index === currentSlide ? '0 0 20px rgba(125, 211, 252, 0.6)' : '0 0 10px rgba(255, 255, 255, 0.3)'
                 }
@@ -804,15 +844,16 @@ const ORUNStylePresentation: React.FC<ORUNStylePresentationProps> = ({ onClose, 
           disabled={currentSlide === slides.length - 1 && !onOpenDashboard}
           variant="contained"
           endIcon={<ArrowForwardIcon />}
+          size="small"
           sx={{ 
             background: currentSlide === slides.length - 1 
               ? 'linear-gradient(45deg, #6EE7B7, #7DD3FC)' 
               : 'linear-gradient(45deg, #7DD3FC, #6EE7B7)',
             color: 'white',
-            px: 3,
-            py: 1.5,
+            px: { xs: 2, md: 3 },
+            py: { xs: 1, md: 1.5 },
             borderRadius: 4,
-            fontSize: '0.9rem',
+            fontSize: { xs: '0.8rem', md: '0.9rem' },
             fontWeight: 600,
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             '&:hover': { 
@@ -832,7 +873,7 @@ const ORUNStylePresentation: React.FC<ORUNStylePresentationProps> = ({ onClose, 
             }
           }}
         >
-          {currentSlide === slides.length - 1 ? '🚀 Open Dashboard' : 'Next'}
+          {currentSlide === slides.length - 1 ? '🚀 Open Dashboard' : 'Next →'}
         </Button>
       </Box>
 
