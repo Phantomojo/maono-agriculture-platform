@@ -1,46 +1,136 @@
-# Getting Started with Create React App
+# MAONO Agricultural Platform
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern agricultural intelligence platform built with React and TypeScript, following React Native design patterns and best practices.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Weather Monitoring**: Real-time weather data and forecasts
+- **Market Prices**: Track agricultural commodity prices across markets
+- **Farm Management**: Manage multiple farms and crop data
+- **Data Visualization**: Interactive charts and maps
+- **Responsive Design**: Works on desktop, tablet, and mobile devices
 
-### `npm start`
+## Technology Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- **React 18** with TypeScript
+- **Material-UI (MUI)** for UI components
+- **React Context API** for state management
+- **Custom Hooks** for data fetching and state management
+- **React Leaflet** for maps
+- **React Globe.gl** for 3D globe visualization
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Project Structure
 
-### `npm test`
+```
+src/
+├── components/          # Reusable UI components
+│   ├── WeatherCard.tsx
+│   └── MarketPriceCard.tsx
+├── screens/            # Main application screens
+│   └── HomeScreen.tsx
+├── hooks/              # Custom React hooks
+│   ├── useWeatherData.ts
+│   └── useMarketPrices.ts
+├── context/            # React Context providers
+│   └── AgriculturalContext.tsx
+├── types/              # TypeScript type definitions
+│   └── index.ts
+├── services/           # API services
+├── utils/              # Utility functions
+└── App.tsx            # Main application component
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Getting Started
 
-### `npm run build`
+### Prerequisites
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Node.js (version 14 or later)
+- npm or yarn
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Installation
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd maono-agricultural-platform
+```
 
-### `npm run eject`
+2. Install dependencies:
+```bash
+npm install
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+3. Start the development server:
+```bash
+npm start
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+4. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Development
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Available Scripts
 
-## Learn More
+- `npm start` - Runs the app in development mode
+- `npm test` - Launches the test runner
+- `npm run build` - Builds the app for production
+- `npm run eject` - Ejects from Create React App (one-way operation)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Code Style
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+This project follows React Native patterns and best practices:
+
+- **Functional Components**: Use functional components with hooks
+- **TypeScript**: Full TypeScript support with strict typing
+- **Custom Hooks**: Extract reusable logic into custom hooks
+- **Context API**: Use React Context for global state management
+- **Component Composition**: Build complex UIs through component composition
+- **Responsive Design**: Mobile-first approach with Material-UI
+
+## Architecture
+
+### State Management
+
+The application uses React Context API for global state management, following React Native patterns:
+
+```typescript
+// Context provides global state
+const { user, weatherData, marketPrices, actions } = useAgricultural();
+
+// Custom hooks for specific data
+const { weather, loading, error } = useWeatherData(location);
+const { prices, loading, error } = useMarketPrices();
+```
+
+### Component Design
+
+Components follow React Native design principles:
+
+- **Props Interface**: Clear TypeScript interfaces for component props
+- **Event Handlers**: Optional onPress handlers for interactive components
+- **Styling**: Material-UI styling with custom theme
+- **Accessibility**: Built-in accessibility features
+
+### Data Flow
+
+1. **Context Provider**: Wraps the entire app with global state
+2. **Custom Hooks**: Fetch and manage specific data types
+3. **Components**: Display data with proper loading and error states
+4. **Services**: Handle API calls and data transformation
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature-name`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin feature-name`
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+- Built following React Native documentation and best practices
+- Material-UI for component library
+- React community for excellent documentation and examples
