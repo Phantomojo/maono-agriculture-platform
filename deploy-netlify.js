@@ -63,3 +63,4 @@ function getDirectorySize(dirPath) {
   
   return totalSize;
 }
+

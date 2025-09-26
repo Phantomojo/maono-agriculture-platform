@@ -497,3 +497,5 @@ const MarketIntelligencePresentation: React.FC<MarketIntelligencePresentationPro
 export default MarketIntelligencePresentation;
 
 
+
+

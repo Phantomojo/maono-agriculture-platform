@@ -483,3 +483,6 @@ const FarmManagementPresentation: React.FC<FarmManagementPresentationProps> = ({
 export default FarmManagementPresentation;
 
 
+
+
+

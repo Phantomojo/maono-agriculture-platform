@@ -168,10 +168,12 @@ const HomeScreen: React.FC = () => {
     <Box sx={{ 
       flexGrow: 1, 
       backgroundColor: 'background.default', 
-      minHeight: '100vh',
+      height: '100vh',
+      width: '100vw',
       background: 'linear-gradient(135deg, #0A0D0F 0%, #0F1A0F 50%, #0A0D0F 100%)',
       position: 'relative',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      boxSizing: 'border-box'
     }}>
       {/* Agricultural Background Animations */}
       <Box sx={{

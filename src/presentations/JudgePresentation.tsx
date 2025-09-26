@@ -22,3 +22,5 @@ const JudgePresentation: React.FC<JudgePresentationProps> = ({ onClose }) => {
 };
 
 export default JudgePresentation;
+
+

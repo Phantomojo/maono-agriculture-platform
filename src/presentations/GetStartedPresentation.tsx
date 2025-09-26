@@ -22,3 +22,5 @@ const GetStartedPresentation: React.FC<GetStartedPresentationProps> = ({ onClose
 };
 
 export default GetStartedPresentation;
+
+
