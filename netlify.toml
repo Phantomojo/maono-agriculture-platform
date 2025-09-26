@@ -1,6 +1,6 @@
 [build]
   publish = "build"
-  command = "echo 'Using pre-built files'"
+  command = "npm run build"
 
 [[redirects]]
   from = "/*"
