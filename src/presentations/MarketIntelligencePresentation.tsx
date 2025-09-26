@@ -304,7 +304,7 @@ const MarketIntelligencePresentation: React.FC<MarketIntelligencePresentationPro
                   }} 
                 />
                 <Chip 
-                  icon={<MoneyIcon />}
+                  icon={<StoreIcon />}
                   label="Real-Time Pricing" 
                   sx={{ 
                     backgroundColor: `${currentSlideData.color}20`,
