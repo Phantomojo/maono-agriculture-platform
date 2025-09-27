@@ -19,6 +19,7 @@ import {
   Divider,
   CircularProgress,
 } from '@mui/material';
+import OptimizedVideo from '../components/OptimizedVideo';
 import {
   PlayArrow as PlayIcon,
   Pause as PauseIcon,
@@ -763,24 +764,10 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
             }}
           >
             {currentSlideData.videoUrl ? (
-              <video
-                ref={videoRef}
-                width="100%"
-                height="100%"
-                poster={currentSlideData.videoPoster}
+              <OptimizedVideo
+                videoId={currentSlideData.id}
                 muted={isVideoMuted}
-                preload="metadata"
-                style={{
-                  objectFit: 'cover',
-                  borderRadius: '12px',
-                }}
-                onLoadStart={() => {
-                  setIsVideoLoading(true);
-                  setVideoError(null);
-                }}
-                onCanPlay={() => {
-                  setIsVideoLoading(false);
-                }}
+                autoPlay={isPlaying}
                 onPlay={() => {
                   setIsVideoPlaying(true);
                   setIsVideoLoading(false);
@@ -789,17 +776,11 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                 onPause={() => {
                   setIsVideoPlaying(false);
                 }}
-                onError={(e) => {
-                  console.error('Video error:', e);
-                  setVideoError('Video failed to load');
+                onError={(error) => {
+                  console.error('Video error:', error);
+                  setVideoError(error);
                   setIsVideoLoading(false);
                   setIsVideoPlaying(false);
-                }}
-                onTimeUpdate={() => {
-                  if (videoRef.current && videoRef.current.duration) {
-                    const progress = (videoRef.current.currentTime / videoRef.current.duration) * 100;
-                    setProgress(Math.min(progress, 100));
-                  }
                 }}
                 onEnded={() => {
                   setIsVideoPlaying(false);
@@ -810,12 +791,13 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                     } else {
                       handleFinishPresentation();
                     }
-                  }, 100); // Reduced from 500ms to 100ms
+                  }, 100);
                 }}
-              >
-                <source src={currentSlideData.videoUrl} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+                style={{
+                  objectFit: 'cover',
+                  borderRadius: '12px',
+                }}
+              />
             ) : (
               <Box
                 sx={{
