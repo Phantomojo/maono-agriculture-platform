@@ -264,6 +264,15 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
           event.preventDefault();
           handleNextSlide();
           break;
+        case 'End':
+          event.preventDefault();
+          if (currentSlide === slides.length - 1) {
+            handleFinishPresentation();
+          } else {
+            setCurrentSlide(slides.length - 1);
+            setProgress(0);
+          }
+          break;
         case 'Escape':
           event.preventDefault();
           onClose();
@@ -339,10 +348,18 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
       setCurrentSlide(currentSlide + 1);
       setProgress(0);
     } else {
-      setIsPlaying(false);
-      setCurrentSlide(0);
-      setProgress(0);
+      // Auto-advance to dashboard after last slide
+      handleFinishPresentation();
     }
+  };
+
+  const handleFinishPresentation = () => {
+    setIsPlaying(false);
+    setCurrentSlide(0);
+    setProgress(0);
+    // Mark presentation as seen and open dashboard
+    localStorage.setItem('maono-presentation-seen', 'true');
+    onOpenDashboard();
   };
 
   const handlePrevSlide = () => {
@@ -423,7 +440,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
           </Typography>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
             <Typography variant="caption" sx={{ color: '#8A9B9B', mr: 2, display: { xs: 'none', sm: 'block' } }}>
-              ← → Navigate • Space Play/Pause • Esc Close
+              ← → Navigate • Space Play/Pause • End Finish • Esc Close
             </Typography>
             <IconButton onClick={handleFullscreen} sx={{ color: '#D1E8E2' }}>
               <FullscreenIcon />
@@ -578,6 +595,36 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                   >
                     {currentSlideData.callToAction}
                   </Typography>
+                </Box>
+              )}
+
+              {/* Finish Presentation Button - Only on last slide */}
+              {currentSlide === slides.length - 1 && (
+                <Box sx={{ textAlign: 'center', mt: 4 }}>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    onClick={handleFinishPresentation}
+                    sx={{
+                      backgroundColor: '#D9B08C',
+                      color: '#010E0E',
+                      px: 4,
+                      py: 1.5,
+                      fontSize: '1.1rem',
+                      fontWeight: 600,
+                      borderRadius: '12px',
+                      textTransform: 'none',
+                      boxShadow: '0 4px 20px rgba(217, 176, 140, 0.3)',
+                      '&:hover': {
+                        backgroundColor: '#E5C4A0',
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 6px 25px rgba(217, 176, 140, 0.4)',
+                      },
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    🚀 Enter MAONO Dashboard
+                  </Button>
                 </Box>
               )}
             </Box>
