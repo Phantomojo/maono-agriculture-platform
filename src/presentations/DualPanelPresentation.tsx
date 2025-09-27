@@ -50,6 +50,21 @@ interface PresentationSlide {
   callToAction?: string;
 }
 
+// YouTube video IDs - Replace with your actual YouTube video IDs
+const YOUTUBE_VIDEOS: Record<string, string> = {
+  'intro': 'dQw4w9WgXcQ', // Replace with your YouTube video ID
+  'problem': 'dQw4w9WgXcQ', // Replace with your YouTube video ID
+  'solution': 'dQw4w9WgXcQ', // Replace with your YouTube video ID
+  'technology': 'dQw4w9WgXcQ', // Replace with your YouTube video ID
+  'impact': 'dQw4w9WgXcQ', // Replace with your YouTube video ID
+  'future': 'dQw4w9WgXcQ', // Replace with your YouTube video ID
+};
+
+// Get YouTube video ID for a slide
+const getYouTubeVideoId = (slideId: string): string => {
+  return YOUTUBE_VIDEOS[slideId] || 'dQw4w9WgXcQ'; // Fallback to default
+};
+
 const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, onOpenDashboard }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -763,59 +778,96 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
             }}
           >
             {currentSlideData.videoUrl ? (
-              <video
-                ref={videoRef}
-                width="100%"
-                height="100%"
-                poster={currentSlideData.videoPoster}
-                muted={isVideoMuted}
-                preload="metadata"
-                style={{
-                  objectFit: 'cover',
+              <Box
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  position: 'relative',
                   borderRadius: '12px',
-                }}
-                onLoadStart={() => {
-                  setIsVideoLoading(true);
-                  setVideoError(null);
-                }}
-                onCanPlay={() => {
-                  setIsVideoLoading(false);
-                }}
-                onPlay={() => {
-                  setIsVideoPlaying(true);
-                  setIsVideoLoading(false);
-                  setVideoError(null);
-                }}
-                onPause={() => {
-                  setIsVideoPlaying(false);
-                }}
-                onError={(e) => {
-                  console.error('Video error:', e);
-                  setVideoError('Video failed to load');
-                  setIsVideoLoading(false);
-                  setIsVideoPlaying(false);
-                }}
-                onTimeUpdate={() => {
-                  if (videoRef.current && videoRef.current.duration) {
-                    const progress = (videoRef.current.currentTime / videoRef.current.duration) * 100;
-                    setProgress(Math.min(progress, 100));
-                  }
-                }}
-                onEnded={() => {
-                  setIsVideoPlaying(false);
-                  // Minimal delay for smooth transition
-                  setTimeout(() => {
-                    if (currentSlide < slides.length - 1) {
-                      handleNextSlide();
-                    } else {
-                      handleFinishPresentation();
-                    }
-                  }, 100);
+                  overflow: 'hidden',
                 }}
               >
-                <source src={currentSlideData.videoUrl} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+                {/* YouTube Embed for better performance */}
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={`https://www.youtube.com/embed/${getYouTubeVideoId(currentSlideData.id)}?autoplay=${isPlaying ? 1 : 0}&mute=${isVideoMuted ? 1 : 0}&controls=1&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&fs=1&cc_load_policy=0&playsinline=1`}
+                  title={currentSlideData.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{
+                    borderRadius: '12px',
+                  }}
+                  onLoad={() => {
+                    setIsVideoLoading(false);
+                    setVideoError(null);
+                  }}
+                  onError={() => {
+                    setVideoError('YouTube video failed to load');
+                    setIsVideoLoading(false);
+                  }}
+                />
+                
+                {/* Fallback to local video if YouTube fails */}
+                {videoError && (
+                  <video
+                    ref={videoRef}
+                    width="100%"
+                    height="100%"
+                    poster={currentSlideData.videoPoster}
+                    muted={isVideoMuted}
+                    preload="metadata"
+                    style={{
+                      objectFit: 'cover',
+                      borderRadius: '12px',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                    }}
+                    onLoadStart={() => {
+                      setIsVideoLoading(true);
+                      setVideoError(null);
+                    }}
+                    onCanPlay={() => {
+                      setIsVideoLoading(false);
+                    }}
+                    onPlay={() => {
+                      setIsVideoPlaying(true);
+                      setIsVideoLoading(false);
+                      setVideoError(null);
+                    }}
+                    onPause={() => {
+                      setIsVideoPlaying(false);
+                    }}
+                    onError={(e) => {
+                      console.error('Video error:', e);
+                      setVideoError('Video failed to load');
+                      setIsVideoLoading(false);
+                      setIsVideoPlaying(false);
+                    }}
+                    onTimeUpdate={() => {
+                      if (videoRef.current && videoRef.current.duration) {
+                        const progress = (videoRef.current.currentTime / videoRef.current.duration) * 100;
+                        setProgress(Math.min(progress, 100));
+                      }
+                    }}
+                    onEnded={() => {
+                      setIsVideoPlaying(false);
+                      setTimeout(() => {
+                        if (currentSlide < slides.length - 1) {
+                          handleNextSlide();
+                        } else {
+                          handleFinishPresentation();
+                        }
+                      }, 100);
+                    }}
+                  >
+                    <source src={currentSlideData.videoUrl} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                )}
+              </Box>
             ) : (
               <Box
                 sx={{

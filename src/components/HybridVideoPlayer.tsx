@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography, Button, CircularProgress } from '@mui/material';
 
-interface YouTubePlayerProps {
+interface HybridVideoPlayerProps {
   videoId: string;
-  title: string;
+  localVideoUrl: string;
+  youtubeVideoId?: string;
   onPlay?: () => void;
   onPause?: () => void;
   onEnded?: () => void;
@@ -14,19 +15,10 @@ interface YouTubePlayerProps {
   style?: React.CSSProperties;
 }
 
-// YouTube video IDs - Upload your videos to YouTube as unlisted and get these IDs
-const YOUTUBE_VIDEOS: Record<string, string> = {
-  'maono-intro': 'dQw4w9WgXcQ', // Replace with your actual YouTube video ID
-  'agricultural-challenges': 'dQw4w9WgXcQ', // Replace with your actual YouTube video ID
-  'maono-solution': 'dQw4w9WgXcQ', // Replace with your actual YouTube video ID
-  'technology-stack': 'dQw4w9WgXcQ', // Replace with your actual YouTube video ID
-  'impact-stories': 'dQw4w9WgXcQ', // Replace with your actual YouTube video ID
-  'future-vision': 'dQw4w9WgXcQ', // Replace with your actual YouTube video ID
-};
-
-const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
+const HybridVideoPlayer: React.FC<HybridVideoPlayerProps> = ({
   videoId,
-  title,
+  localVideoUrl,
+  youtubeVideoId,
   onPlay,
   onPause,
   onEnded,
@@ -38,41 +30,41 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [player, setPlayer] = useState<any>(null);
+  const [useYouTube, setUseYouTube] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const youtubeVideoId = YOUTUBE_VIDEOS[videoId];
-
+  // Check if we should use YouTube (if YouTube ID is provided)
   useEffect(() => {
-    // Load YouTube API if not already loaded
-    if (!(window as any).YT) {
-      const script = document.createElement('script');
-      script.src = 'https://www.youtube.com/iframe_api';
-      script.async = true;
-      document.head.appendChild(script);
-
-      script.onload = () => {
-        (window as any).YT.ready(() => {
-          initializePlayer();
-        });
-      };
-    } else {
-      initializePlayer();
+    if (youtubeVideoId && youtubeVideoId !== 'dQw4w9WgXcQ') {
+      setUseYouTube(true);
     }
-
-    return () => {
-      if (player) {
-        player.destroy();
-      }
-    };
   }, [youtubeVideoId]);
 
-  const initializePlayer = () => {
-    if (!youtubeVideoId || youtubeVideoId.startsWith('YOUR_VIDEO_ID')) {
-      setHasError(true);
-      setIsLoading(false);
-      onError?.('YouTube video ID not configured');
-      return;
+  // YouTube Player Implementation
+  useEffect(() => {
+    if (useYouTube && youtubeVideoId) {
+      // Load YouTube API if not already loaded
+      if (!(window as any).YT) {
+        const script = document.createElement('script');
+        script.src = 'https://www.youtube.com/iframe_api';
+        script.async = true;
+        document.head.appendChild(script);
+
+        script.onload = () => {
+          (window as any).YT.ready(() => {
+            initializeYouTubePlayer();
+          });
+        };
+      } else {
+        initializeYouTubePlayer();
+      }
     }
+  }, [useYouTube, youtubeVideoId]);
+
+  const initializeYouTubePlayer = () => {
+    if (!youtubeVideoId) return;
 
     const playerInstance = new (window as any).YT.Player(`youtube-player-${videoId}`, {
       height: '100%',
@@ -94,7 +86,6 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
         onReady: (event: any) => {
           setIsLoading(false);
           setHasError(false);
-          setPlayer(event.target);
         },
         onStateChange: (event: any) => {
           switch (event.data) {
@@ -123,10 +114,71 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
     });
   };
 
+  // Local Video Implementation
+  useEffect(() => {
+    if (!useYouTube && videoRef.current) {
+      const video = videoRef.current;
+      
+      const handleCanPlay = () => {
+        setIsLoading(false);
+        setHasError(false);
+      };
+
+      const handleError = () => {
+        setIsLoading(false);
+        setHasError(true);
+        onError?.('Video failed to load');
+      };
+
+      const handleLoadStart = () => {
+        setIsLoading(true);
+        setHasError(false);
+      };
+
+      video.addEventListener('canplay', handleCanPlay);
+      video.addEventListener('error', handleError);
+      video.addEventListener('loadstart', handleLoadStart);
+
+      // Load the video
+      video.load();
+
+      return () => {
+        video.removeEventListener('canplay', handleCanPlay);
+        video.removeEventListener('error', handleError);
+        video.removeEventListener('loadstart', handleLoadStart);
+      };
+    }
+  }, [useYouTube, onError]);
+
   const handleRetry = () => {
+    setRetryCount(prev => prev + 1);
     setHasError(false);
     setIsLoading(true);
-    initializePlayer();
+    
+    if (useYouTube) {
+      // Retry YouTube
+      initializeYouTubePlayer();
+    } else if (videoRef.current) {
+      videoRef.current.load();
+    }
+  };
+
+  const handlePlay = () => {
+    onPlay?.();
+  };
+
+  const handlePause = () => {
+    onPause?.();
+  };
+
+  const handleEnded = () => {
+    onEnded?.();
+  };
+
+  const handleError = () => {
+    setHasError(true);
+    setIsLoading(false);
+    onError?.('Video playback error');
   };
 
   if (hasError) {
@@ -152,10 +204,7 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
           ⚠️ Video Error
         </Typography>
         <Typography variant="body2" sx={{ color: '#D1E8E2', mb: 2, textAlign: 'center' }}>
-          {youtubeVideoId.startsWith('YOUR_VIDEO_ID') 
-            ? 'YouTube video not configured yet' 
-            : 'Failed to load YouTube video'
-          }
+          {useYouTube ? 'YouTube video failed to load' : 'Local video failed to load'}
         </Typography>
         <Button
           variant="contained"
@@ -177,6 +226,7 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
 
   return (
     <Box
+      ref={containerRef}
       sx={{
         position: 'relative',
         width: '100%',
@@ -207,21 +257,45 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
         >
           <CircularProgress sx={{ color: '#D9B08C', mb: 2 }} />
           <Typography variant="body2" sx={{ color: '#D1E8E2' }}>
-            Loading YouTube video...
+            Loading {useYouTube ? 'YouTube' : 'video'}...
           </Typography>
         </Box>
       )}
 
       {/* YouTube Player */}
-      <div
-        id={`youtube-player-${videoId}`}
-        style={{
-          width: '100%',
-          height: '100%',
-        }}
-      />
+      {useYouTube && (
+        <div
+          id={`youtube-player-${videoId}`}
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+        />
+      )}
+
+      {/* Local Video Player */}
+      {!useYouTube && (
+        <video
+          ref={videoRef}
+          width="100%"
+          height="100%"
+          muted={muted}
+          autoPlay={autoPlay}
+          onPlay={handlePlay}
+          onPause={handlePause}
+          onEnded={handleEnded}
+          onError={handleError}
+          style={{
+            objectFit: 'cover',
+            borderRadius: '12px',
+          }}
+        >
+          <source src={localVideoUrl} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      )}
     </Box>
   );
 };
 
-export default YouTubePlayer;
+export default HybridVideoPlayer;
