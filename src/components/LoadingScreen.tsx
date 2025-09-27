@@ -38,26 +38,59 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
         renderer.setClearColor(0x000000, 0);
         globeRef.current.appendChild(renderer.domElement);
 
-        // Create Earth-like globe with textures (like ORUN site)
+        // Create Earth globe with proper textures
         const geometry = new THREE.SphereGeometry(1, 64, 64);
         
-        // Create Earth-like material with colors
-        const material = new THREE.MeshPhongMaterial({
-          color: 0x4A90E2, // Ocean blue
+        // Create Earth material with realistic colors
+        const earthMaterial = new THREE.MeshPhongMaterial({
+          color: 0x4A90E2, // Ocean blue base
           transparent: true,
           opacity: 0.9,
           shininess: 100,
           specular: 0x111111,
         });
-        const globe = new THREE.Mesh(geometry, material);
+        const globe = new THREE.Mesh(geometry, earthMaterial);
         scene.add(globe);
 
-        // Add continents using a different material
+        // Create continent overlay with proper UV mapping
         const continentGeometry = new THREE.SphereGeometry(1.001, 64, 64);
+        
+        // Create a simple continent pattern using vertex colors
+        const positions = continentGeometry.attributes.position.array;
+        const colors = new Float32Array(positions.length);
+        
+        for (let i = 0; i < positions.length; i += 3) {
+          const x = positions[i];
+          const y = positions[i + 1];
+          const z = positions[i + 2];
+          
+          // Create continent-like patterns based on position
+          const lat = Math.asin(y);
+          const lon = Math.atan2(z, x);
+          
+          // Simple continent simulation
+          const continentNoise = Math.sin(lat * 3) * Math.cos(lon * 4) + 
+                                Math.sin(lat * 5) * Math.cos(lon * 6) * 0.5;
+          
+          if (continentNoise > 0.3) {
+            // Continent colors (green/brown)
+            colors[i] = 0.2 + Math.random() * 0.3;     // R
+            colors[i + 1] = 0.4 + Math.random() * 0.4; // G
+            colors[i + 2] = 0.1 + Math.random() * 0.2; // B
+          } else {
+            // Ocean colors (blue)
+            colors[i] = 0.1 + Math.random() * 0.2;     // R
+            colors[i + 1] = 0.3 + Math.random() * 0.3;  // G
+            colors[i + 2] = 0.6 + Math.random() * 0.3; // B
+          }
+        }
+        
+        continentGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        
         const continentMaterial = new THREE.MeshPhongMaterial({
-          color: 0x2D5016, // Forest green for continents
+          vertexColors: true,
           transparent: true,
-          opacity: 0.7,
+          opacity: 0.8,
         });
         const continents = new THREE.Mesh(continentGeometry, continentMaterial);
         scene.add(continents);
@@ -113,6 +146,16 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
         const cityLights = new THREE.Points(cityLightsGeometry, cityLightsMaterial);
         scene.add(cityLights);
 
+        // Add cloud layer
+        const cloudGeometry = new THREE.SphereGeometry(1.005, 32, 32);
+        const cloudMaterial = new THREE.MeshPhongMaterial({
+          color: 0xFFFFFF,
+          transparent: true,
+          opacity: 0.3,
+        });
+        const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
+        scene.add(clouds);
+
         camera.position.z = 3;
 
         // Animation loop - Earth-like rotation
@@ -122,11 +165,12 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
           continents.rotation.y += 0.003; // Continents rotate with globe
           atmosphere.rotation.y += 0.002; // Atmosphere rotates slightly slower
           cityLights.rotation.y += 0.003; // City lights follow Earth
+          clouds.rotation.y += 0.004; // Clouds move slightly faster
           renderer.render(scene, camera);
         };
         animate();
 
-        threeRef.current = { scene, camera, renderer, globe, continents, atmosphere, cityLights };
+        threeRef.current = { scene, camera, renderer, globe, continents, atmosphere, cityLights, clouds };
       } catch (error) {
         console.log('Three.js not available, using fallback visualization');
       }
