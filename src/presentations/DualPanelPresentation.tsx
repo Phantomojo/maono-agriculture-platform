@@ -765,6 +765,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              minHeight: '400px', // Ensure minimum height
             }}
           >
             {currentSlideData.videoUrl ? (
@@ -781,8 +782,6 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                 <video
                   key={`video-${currentSlide}-${currentSlideData.id}`}
                   ref={videoRef}
-                  width="100%"
-                  height="100%"
                   poster={currentSlideData.videoPoster}
                   muted={isVideoMuted}
                   preload="metadata"
@@ -791,6 +790,8 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                     objectFit: 'contain',
                     borderRadius: '12px',
                     backgroundColor: '#000',
+                    width: 'auto',
+                    height: 'auto',
                     maxWidth: '100%',
                     maxHeight: '100%',
                     display: 'block',
