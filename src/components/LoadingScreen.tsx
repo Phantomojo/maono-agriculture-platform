@@ -38,130 +38,95 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
         renderer.setClearColor(0x000000, 0);
         globeRef.current.appendChild(renderer.domElement);
 
-        // Create the actual ORUN globe - dark gray sphere with teal atmosphere
-        const geometry = new THREE.SphereGeometry(1, 32, 32);
+        // Create Earth-like globe with textures (like ORUN site)
+        const geometry = new THREE.SphereGeometry(1, 64, 64);
+        
+        // Create Earth-like material with colors
         const material = new THREE.MeshPhongMaterial({
-          color: 0x4A5568, // Dark gray globe
+          color: 0x4A90E2, // Ocean blue
           transparent: true,
           opacity: 0.9,
           shininess: 100,
-          specular: 0x222222,
+          specular: 0x111111,
         });
         const globe = new THREE.Mesh(geometry, material);
         scene.add(globe);
 
-        // Add teal atmosphere glow around the globe
-        const atmosphereGeometry = new THREE.SphereGeometry(1.15, 32, 32);
-        const atmosphereMaterial = new THREE.MeshPhongMaterial({
-          color: 0x116466, // Teal atmosphere
+        // Add continents using a different material
+        const continentGeometry = new THREE.SphereGeometry(1.001, 64, 64);
+        const continentMaterial = new THREE.MeshPhongMaterial({
+          color: 0x2D5016, // Forest green for continents
           transparent: true,
-          opacity: 0.3,
+          opacity: 0.7,
+        });
+        const continents = new THREE.Mesh(continentGeometry, continentMaterial);
+        scene.add(continents);
+
+        // Add atmosphere glow around the globe
+        const atmosphereGeometry = new THREE.SphereGeometry(1.1, 32, 32);
+        const atmosphereMaterial = new THREE.MeshPhongMaterial({
+          color: 0x87CEEB, // Sky blue atmosphere
+          transparent: true,
+          opacity: 0.2,
           side: THREE.BackSide,
         });
         const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
         scene.add(atmosphere);
 
-        // Enhanced lighting for better visibility
-        const ambientLight = new THREE.AmbientLight(0x404040, 1.2);
+        // Earth-like lighting
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
         scene.add(ambientLight);
         
-        const directionalLight = new THREE.DirectionalLight(0xD9B08C, 1.5);
-        directionalLight.position.set(5, 5, 5);
+        // Sun-like directional light
+        const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.2);
+        directionalLight.position.set(5, 3, 5);
         scene.add(directionalLight);
 
-        // Add rim lighting for better definition
-        const rimLight = new THREE.DirectionalLight(0x6EE7B7, 0.8);
-        rimLight.position.set(-5, -5, -5);
+        // Add subtle rim lighting for depth
+        const rimLight = new THREE.DirectionalLight(0x87CEEB, 0.3);
+        rimLight.position.set(-3, -2, -3);
         scene.add(rimLight);
 
-        // Add golden grid lines with better visibility
-        const gridGeometry = new THREE.SphereGeometry(1.05, 32, 32);
-        const gridMaterial = new THREE.MeshBasicMaterial({
-          color: 0xD9B08C, // Golden grid lines
-          wireframe: true,
-          transparent: true,
-          opacity: 0.6,
-        });
-        const grid = new THREE.Mesh(gridGeometry, gridMaterial);
-        scene.add(grid);
-
-        // Add inner grid for more detail
-        const innerGridGeometry = new THREE.SphereGeometry(1.02, 16, 16);
-        const innerGridMaterial = new THREE.MeshBasicMaterial({
-          color: 0x6EE7B7, // Mint green inner grid
-          wireframe: true,
-          transparent: true,
-          opacity: 0.4,
-        });
-        const innerGrid = new THREE.Mesh(innerGridGeometry, innerGridMaterial);
-        scene.add(innerGrid);
-
-        // Add scattered golden data points
-        const pointsGeometry = new THREE.BufferGeometry();
-        const pointsCount = 50;
-        const positions = new Float32Array(pointsCount * 3);
+        // Add city lights on the dark side of Earth
+        const cityLightsGeometry = new THREE.BufferGeometry();
+        const cityLightsCount = 30;
+        const cityPositions = new Float32Array(cityLightsCount * 3);
         
-        for (let i = 0; i < pointsCount; i++) {
+        for (let i = 0; i < cityLightsCount; i++) {
           const phi = Math.acos(1 - 2 * Math.random());
           const theta = 2 * Math.PI * Math.random();
-          const radius = 1.1;
+          const radius = 1.01; // Slightly above the surface
           
-          positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-          positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-          positions[i * 3 + 2] = radius * Math.cos(phi);
+          cityPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+          cityPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+          cityPositions[i * 3 + 2] = radius * Math.cos(phi);
         }
         
-        pointsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        const pointsMaterial = new THREE.PointsMaterial({
-          color: 0xD9B08C, // Golden data points
-          size: 0.04,
+        cityLightsGeometry.setAttribute('position', new THREE.BufferAttribute(cityPositions, 3));
+        const cityLightsMaterial = new THREE.PointsMaterial({
+          color: 0xFFFF99, // Warm city lights
+          size: 0.02,
           transparent: true,
-          opacity: 1.0,
+          opacity: 0.8,
           sizeAttenuation: false,
         });
-        const points = new THREE.Points(pointsGeometry, pointsMaterial);
-        scene.add(points);
-
-        // Add larger glowing points for emphasis
-        const glowPointsGeometry = new THREE.BufferGeometry();
-        const glowPositions = new Float32Array(10 * 3);
-        for (let i = 0; i < 10; i++) {
-          const phi = Math.acos(1 - 2 * Math.random());
-          const theta = 2 * Math.PI * Math.random();
-          const radius = 1.1;
-          
-          glowPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-          glowPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-          glowPositions[i * 3 + 2] = radius * Math.cos(phi);
-        }
-        
-        glowPointsGeometry.setAttribute('position', new THREE.BufferAttribute(glowPositions, 3));
-        const glowPointsMaterial = new THREE.PointsMaterial({
-          color: 0x6EE7B7, // Mint green glow points
-          size: 0.08,
-          transparent: true,
-          opacity: 0.9,
-          sizeAttenuation: false,
-        });
-        const glowPoints = new THREE.Points(glowPointsGeometry, glowPointsMaterial);
-        scene.add(glowPoints);
+        const cityLights = new THREE.Points(cityLightsGeometry, cityLightsMaterial);
+        scene.add(cityLights);
 
         camera.position.z = 3;
 
-        // Animation loop
+        // Animation loop - Earth-like rotation
         const animate = () => {
           requestAnimationFrame(animate);
-          globe.rotation.y += 0.005;
-          atmosphere.rotation.y += 0.003;
-          grid.rotation.y += 0.002;
-          innerGrid.rotation.y += 0.0015;
-          points.rotation.y += 0.001;
-          glowPoints.rotation.y += 0.0008;
+          globe.rotation.y += 0.003; // Slow Earth rotation
+          continents.rotation.y += 0.003; // Continents rotate with globe
+          atmosphere.rotation.y += 0.002; // Atmosphere rotates slightly slower
+          cityLights.rotation.y += 0.003; // City lights follow Earth
           renderer.render(scene, camera);
         };
         animate();
 
-        threeRef.current = { scene, camera, renderer, globe, atmosphere, grid, innerGrid, points, glowPoints };
+        threeRef.current = { scene, camera, renderer, globe, continents, atmosphere, cityLights };
       } catch (error) {
         console.log('Three.js not available, using fallback visualization');
       }
