@@ -42,7 +42,7 @@ interface PresentationSlide {
   subtitle?: string;
   content: string;
   bulletPoints: string[];
-  videoUrl?: string;
+  videoUrl?: string | null;
   videoPoster?: string;
   duration: number;
   keyPoints?: string[];
