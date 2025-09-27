@@ -776,6 +776,9 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                   position: 'relative',
                   borderRadius: '12px',
                   overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
                 {/* Use your actual local videos */}
@@ -795,6 +798,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                     maxWidth: '100%',
                     maxHeight: '100%',
                     display: 'block',
+                    margin: 'auto',
                   }}
                   onLoadStart={() => {
                     setIsVideoLoading(true);
