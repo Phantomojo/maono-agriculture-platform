@@ -63,6 +63,8 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
   const [videoError, setVideoError] = useState<string | null>(null);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [showVideoControls, setShowVideoControls] = useState(true);
+  const [videoControlsTimeout, setVideoControlsTimeout] = useState<NodeJS.Timeout | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
@@ -447,6 +449,31 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
     }
   };
 
+  const showControlsTemporarily = () => {
+    setShowVideoControls(true);
+    if (videoControlsTimeout) {
+      clearTimeout(videoControlsTimeout);
+    }
+    const timeout = setTimeout(() => {
+      setShowVideoControls(false);
+    }, 3000);
+    setVideoControlsTimeout(timeout);
+  };
+
+  const handleVideoMouseMove = () => {
+    showControlsTemporarily();
+  };
+
+  const handleVideoMouseLeave = () => {
+    if (videoControlsTimeout) {
+      clearTimeout(videoControlsTimeout);
+    }
+    const timeout = setTimeout(() => {
+      setShowVideoControls(false);
+    }, 1000);
+    setVideoControlsTimeout(timeout);
+  };
+
   const currentSlideData = slides[currentSlide];
   
   // Debug: Log current slide and video URL
@@ -456,6 +483,18 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
     console.log(`🆔 Slide ID: ${currentSlideData.id}`);
     console.log(`🎯 Video Key: video-${currentSlide}-${currentSlideData.id}`);
   }, [currentSlide, currentSlideData]);
+
+  // Auto-hide controls when video starts playing
+  useEffect(() => {
+    if (isVideoPlaying) {
+      const timeout = setTimeout(() => {
+        setShowVideoControls(false);
+      }, 2000);
+      return () => clearTimeout(timeout);
+    } else {
+      setShowVideoControls(true);
+    }
+  }, [isVideoPlaying]);
 
   return (
     <Box
@@ -734,10 +773,10 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
           <ArrowForwardIcon />
         </IconButton>
 
-        {/* Right Panel - Video (Smaller) */}
+        {/* Right Panel - Video (Larger) */}
         <Box
           sx={{
-            width: '400px',
+            width: '500px', // Increased from 400px
             display: 'flex',
             flexDirection: 'column',
             p: 2,
@@ -781,11 +820,15 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                   poster={currentSlideData.videoPoster}
                   muted={isVideoMuted}
                   preload="metadata"
-                  controls
+                  controls={showVideoControls}
+                  onMouseMove={handleVideoMouseMove}
+                  onMouseLeave={handleVideoMouseLeave}
                   style={{
                     objectFit: 'contain',
                     borderRadius: '12px',
                     backgroundColor: '#000',
+                    aspectRatio: '9/16', // Portrait aspect ratio
+                    maxHeight: '80vh', // Limit height for better fit
                   }}
                   onLoadStart={() => {
                     setIsVideoLoading(true);
