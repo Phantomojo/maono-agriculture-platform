@@ -20,7 +20,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
     { text: 'Ready to Transform Agriculture!', duration: 1000 },
   ];
 
-  // Initialize Three.js Globe
+  // Initialize ORUN Globe
   useEffect(() => {
     const initGlobe = async () => {
       try {
@@ -38,67 +38,51 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
         renderer.setClearColor(0x000000, 0);
         globeRef.current.appendChild(renderer.domElement);
 
-        // Create globe with brighter, more visible materials
+        // Create ORUN-style globe
         const geometry = new THREE.SphereGeometry(1, 32, 32);
         const material = new THREE.MeshPhongMaterial({
-          color: 0x4A5568, // Brighter gray-blue
+          color: 0x2D3748,
           transparent: true,
-          opacity: 0.9,
+          opacity: 0.8,
           shininess: 100,
-          specular: 0x222222,
+          specular: 0x111111,
         });
         const globe = new THREE.Mesh(geometry, material);
         scene.add(globe);
 
-        // Add atmosphere with more visible glow
-        const atmosphereGeometry = new THREE.SphereGeometry(1.15, 32, 32);
+        // Add atmosphere
+        const atmosphereGeometry = new THREE.SphereGeometry(1.1, 32, 32);
         const atmosphereMaterial = new THREE.MeshPhongMaterial({
           color: 0x116466,
           transparent: true,
-          opacity: 0.3,
+          opacity: 0.2,
           side: THREE.BackSide,
         });
         const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
         scene.add(atmosphere);
 
-        // Enhanced lighting for better visibility
-        const ambientLight = new THREE.AmbientLight(0x404040, 1.2);
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.8);
         scene.add(ambientLight);
         
-        const directionalLight = new THREE.DirectionalLight(0xD9B08C, 1.5);
+        const directionalLight = new THREE.DirectionalLight(0xD9B08C, 1.0);
         directionalLight.position.set(5, 5, 5);
         scene.add(directionalLight);
 
-        // Add rim lighting for better definition
-        const rimLight = new THREE.DirectionalLight(0x6EE7B7, 0.8);
-        rimLight.position.set(-5, -5, -5);
-        scene.add(rimLight);
-
-        // Add grid lines with better visibility
+        // Add grid lines
         const gridGeometry = new THREE.SphereGeometry(1.05, 32, 32);
         const gridMaterial = new THREE.MeshBasicMaterial({
           color: 0xD9B08C,
           wireframe: true,
           transparent: true,
-          opacity: 0.6,
+          opacity: 0.4,
         });
         const grid = new THREE.Mesh(gridGeometry, gridMaterial);
         scene.add(grid);
 
-        // Add inner grid for more detail
-        const innerGridGeometry = new THREE.SphereGeometry(1.02, 16, 16);
-        const innerGridMaterial = new THREE.MeshBasicMaterial({
-          color: 0x6EE7B7,
-          wireframe: true,
-          transparent: true,
-          opacity: 0.4,
-        });
-        const innerGrid = new THREE.Mesh(innerGridGeometry, innerGridMaterial);
-        scene.add(innerGrid);
-
         // Add data points
         const pointsGeometry = new THREE.BufferGeometry();
-        const pointsCount = 50;
+        const pointsCount = 30;
         const positions = new Float32Array(pointsCount * 3);
         
         for (let i = 0; i < pointsCount; i++) {
@@ -114,54 +98,28 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
         pointsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         const pointsMaterial = new THREE.PointsMaterial({
           color: 0xD9B08C,
-          size: 0.04,
+          size: 0.03,
           transparent: true,
-          opacity: 1.0,
+          opacity: 0.8,
           sizeAttenuation: false,
         });
         const points = new THREE.Points(pointsGeometry, pointsMaterial);
         scene.add(points);
-
-        // Add larger glowing points for emphasis
-        const glowPointsGeometry = new THREE.BufferGeometry();
-        const glowPositions = new Float32Array(10 * 3);
-        for (let i = 0; i < 10; i++) {
-          const phi = Math.acos(1 - 2 * Math.random());
-          const theta = 2 * Math.PI * Math.random();
-          const radius = 1.1;
-          
-          glowPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-          glowPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-          glowPositions[i * 3 + 2] = radius * Math.cos(phi);
-        }
-        
-        glowPointsGeometry.setAttribute('position', new THREE.BufferAttribute(glowPositions, 3));
-        const glowPointsMaterial = new THREE.PointsMaterial({
-          color: 0x6EE7B7,
-          size: 0.08,
-          transparent: true,
-          opacity: 0.9,
-          sizeAttenuation: false,
-        });
-        const glowPoints = new THREE.Points(glowPointsGeometry, glowPointsMaterial);
-        scene.add(glowPoints);
 
         camera.position.z = 3;
 
         // Animation loop
         const animate = () => {
           requestAnimationFrame(animate);
-          globe.rotation.y += 0.005;
-          atmosphere.rotation.y += 0.003;
-          grid.rotation.y += 0.002;
-          innerGrid.rotation.y += 0.0015;
-          points.rotation.y += 0.001;
-          glowPoints.rotation.y += 0.0008;
+          globe.rotation.y += 0.003;
+          atmosphere.rotation.y += 0.002;
+          grid.rotation.y += 0.001;
+          points.rotation.y += 0.0005;
           renderer.render(scene, camera);
         };
         animate();
 
-        threeRef.current = { scene, camera, renderer, globe, atmosphere, grid, innerGrid, points, glowPoints };
+        threeRef.current = { scene, camera, renderer, globe, atmosphere, grid, points };
       } catch (error) {
         console.log('Three.js not available, using fallback visualization');
       }

@@ -219,8 +219,8 @@ const App: React.FC = () => {
       const timer = setTimeout(() => {
         setIsLoading(false);
         localStorage.setItem('maono-loading-seen', 'true');
-        setTimeout(() => setShowLoading(false), 200);
-      }, 4000); // Reduced from 8 seconds to 4 seconds
+        setTimeout(() => setShowLoading(false), 500);
+      }, 8000); // Back to 8 seconds for proper loading experience
 
       return () => clearTimeout(timer);
     }
@@ -232,12 +232,6 @@ const App: React.FC = () => {
     setTimeout(() => setShowLoading(false), 500);
   };
 
-  // Force show loading screen (for testing)
-  const forceShowLoading = () => {
-    localStorage.removeItem('maono-loading-seen');
-    setShowLoading(true);
-    setIsLoading(true);
-  };
 
   if (showLoading) {
     return (
@@ -259,29 +253,6 @@ const App: React.FC = () => {
         top: 0,
         left: 0
       }}>
-        {/* Debug button to force show loading screen */}
-        <Box sx={{
-          position: 'fixed',
-          top: 10,
-          right: 10,
-          zIndex: 10000,
-        }}>
-          <button
-            onClick={forceShowLoading}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#D9B08C',
-              color: '#010E0E',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '12px',
-              fontWeight: 'bold',
-            }}
-          >
-            Show Loading
-          </button>
-        </Box>
         <AgriculturalProvider>
           <HomeScreen />
         </AgriculturalProvider>
