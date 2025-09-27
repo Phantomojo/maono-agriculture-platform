@@ -28,7 +28,8 @@ async function uploadVideosToBlobStore() {
         // Upload to your "maono" blob store
         const blob = await put(video, fs.createReadStream(videoPath), {
           access: 'public',
-          contentType: 'video/mp4'
+          contentType: 'video/mp4',
+          allowOverwrite: true
         });
         
         videoUrls[video] = blob.url;
