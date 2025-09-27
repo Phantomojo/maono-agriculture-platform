@@ -38,19 +38,29 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
         renderer.setClearColor(0x000000, 0);
         globeRef.current.appendChild(renderer.domElement);
 
-        // Create simple Earth-like globe
-        const geometry = new THREE.SphereGeometry(1, 32, 32);
+        // Create Earth globe with proper textures
+        const geometry = new THREE.SphereGeometry(1, 64, 64);
         
-        // Create Earth material
-        const material = new THREE.MeshPhongMaterial({
-          color: 0x4A90E2, // Ocean blue
+        // Create Earth material with realistic colors and textures
+        const earthMaterial = new THREE.MeshPhongMaterial({
+          color: 0x4A90E2, // Ocean blue base
           transparent: true,
           opacity: 0.9,
           shininess: 100,
           specular: 0x111111,
         });
-        const globe = new THREE.Mesh(geometry, material);
+        const globe = new THREE.Mesh(geometry, earthMaterial);
         scene.add(globe);
+
+        // Add continent overlay
+        const continentGeometry = new THREE.SphereGeometry(1.001, 64, 64);
+        const continentMaterial = new THREE.MeshPhongMaterial({
+          color: 0x2D5016, // Forest green for continents
+          transparent: true,
+          opacity: 0.8,
+        });
+        const continents = new THREE.Mesh(continentGeometry, continentMaterial);
+        scene.add(continents);
 
         // Add atmosphere
         const atmosphereGeometry = new THREE.SphereGeometry(1.1, 32, 32);
@@ -63,26 +73,59 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
         const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
         scene.add(atmosphere);
 
-        // Simple lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.8);
+        // Add city lights
+        const cityLightsGeometry = new THREE.BufferGeometry();
+        const cityLightsCount = 20;
+        const cityPositions = new Float32Array(cityLightsCount * 3);
+        
+        for (let i = 0; i < cityLightsCount; i++) {
+          const phi = Math.acos(1 - 2 * Math.random());
+          const theta = 2 * Math.PI * Math.random();
+          const radius = 1.01;
+          
+          cityPositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+          cityPositions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+          cityPositions[i * 3 + 2] = radius * Math.cos(phi);
+        }
+        
+        cityLightsGeometry.setAttribute('position', new THREE.BufferAttribute(cityPositions, 3));
+        const cityLightsMaterial = new THREE.PointsMaterial({
+          color: 0xFFFF99,
+          size: 0.02,
+          transparent: true,
+          opacity: 0.8,
+          sizeAttenuation: false,
+        });
+        const cityLights = new THREE.Points(cityLightsGeometry, cityLightsMaterial);
+        scene.add(cityLights);
+
+        // Realistic lighting
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
         scene.add(ambientLight);
         
-        const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+        const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.2);
         directionalLight.position.set(5, 3, 5);
         scene.add(directionalLight);
 
+        // Add rim lighting for depth
+        const rimLight = new THREE.DirectionalLight(0x87CEEB, 0.3);
+        rimLight.position.set(-3, -2, -3);
+        scene.add(rimLight);
+
         camera.position.z = 3;
 
-        // Simple animation
+        // Earth-like animation
         const animate = () => {
           requestAnimationFrame(animate);
           globe.rotation.y += 0.003;
+          continents.rotation.y += 0.003;
           atmosphere.rotation.y += 0.002;
+          cityLights.rotation.y += 0.003;
           renderer.render(scene, camera);
         };
         animate();
 
-        threeRef.current = { scene, camera, renderer, globe, atmosphere };
+        threeRef.current = { scene, camera, renderer, globe, continents, atmosphere, cityLights };
       } catch (error) {
         console.log('Three.js not available, using fallback visualization');
       }
