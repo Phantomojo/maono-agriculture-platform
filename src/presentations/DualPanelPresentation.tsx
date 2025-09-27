@@ -163,22 +163,22 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
     {
       id: 'impact',
       title: 'Proven Impact',
-      subtitle: 'Transforming Lives and Communities',
-      content: 'MAONO has already helped thousands of farmers increase their yields, improve their income, and build sustainable agricultural practices across Africa.',
+      subtitle: 'Building on Success, Taking It Further',
+      content: 'Hey everyone! You know, we\'ve all heard of cool tech platforms like DigiFarm here in Kenya, right? They\'ve done an awesome job of helping farmers get access to things like seeds and market prices. It\'s a huge step forward!\n\nBut here\'s the thing... that\'s just the beginning.\n\nImagine if that same farmer could get even more precise help. With MAONO, it\'s not just "general" advice; it\'s like having a personal farm expert in your pocket. Our AI and satellites literally check out your farm from above, telling you about a pest problem the second it starts to appear, or giving you the perfect planting date for your specific piece of land. And we\'ve got you covered on the business side too, using blockchain to make sure you get a fair price and can build a credit history.\n\nSo, while platforms like DigiFarm have built the foundation, we\'re here to build the skyscraper. We\'re taking that great idea and making it even smarter, more precise, and more powerful for every single farmer.',
       bulletPoints: [
-        '40% average increase in crop yields',
-        '60% improvement in market access',
-        '50% reduction in post-harvest losses',
-        '80% of users report increased income',
-        '95% user satisfaction rate'
+        'Building on platforms like DigiFarm',
+        'AI and satellite precision monitoring',
+        'Personal farm expert in your pocket',
+        'Blockchain for fair pricing and credit history',
+        'From foundation to skyscraper innovation'
       ],
       keyPoints: [
-        '40% Yield Increase',
-        '60% Better Market Access',
-        '50% Less Post-Harvest Loss',
-        '80% Income Improvement'
+        'Building on DigiFarm Success',
+        'AI Satellite Monitoring',
+        'Personal Farm Expert',
+        'Blockchain Fair Pricing'
       ],
-      videoUrl: null, // Video not available yet
+      videoUrl: '/videos/impact-stories.mp4',
       videoPoster: '/images/impact-poster.jpg',
       duration: 12000,
       callToAction: 'Join Our Success Stories'
