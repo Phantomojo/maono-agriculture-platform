@@ -736,11 +736,11 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
           <ArrowForwardIcon />
         </IconButton>
 
-        {/* Right Panel - Video (Portrait) */}
+        {/* Right Panel - Video (Full Right Side) */}
         <Box
           sx={{
-            width: '350px', // Narrower for portrait
-            height: '600px', // Taller for portrait
+            width: '50%', // Full right half of screen
+            height: '100vh', // Full viewport height
             display: 'flex',
             flexDirection: 'column',
             p: 2,
@@ -766,7 +766,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              aspectRatio: '9/16', // Portrait aspect ratio for mobile videos
+              minHeight: '400px', // Minimum height for proper display
             }}
           >
             {currentSlideData.videoUrl ? (
@@ -794,12 +794,9 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                     objectFit: 'contain',
                     borderRadius: '12px',
                     backgroundColor: '#000',
-                    width: 'auto',
-                    height: 'auto',
-                    maxWidth: '100%',
-                    maxHeight: '100%',
-                    display: 'block',
-                    margin: 'auto',
+                    width: '100%',
+                    height: '100%',
+                    display: 'block'
                   }}
                   onLoadStart={() => {
                     setIsVideoLoading(true);
