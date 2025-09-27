@@ -740,6 +740,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         <Box
           sx={{
             width: '500px', // Increased from 400px
+            height: '600px', // Set specific height for better proportions
             display: 'flex',
             flexDirection: 'column',
             p: 2,
@@ -765,7 +766,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              minHeight: '400px', // Ensure minimum height
+              aspectRatio: '4/3', // Better aspect ratio for video display
             }}
           >
             {currentSlideData.videoUrl ? (
