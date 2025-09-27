@@ -19,23 +19,12 @@ import {
 import WeatherCard from '../components/WeatherCard';
 import MarketPriceCard from '../components/MarketPriceCard';
 import { useWeatherData, useMarketPrices } from '../hooks';
-import { 
-  GetStartedPresentation,
-  WeatherIntelligencePresentation,
-  MarketIntelligencePresentation,
-  FarmManagementPresentation,
-  AnalyticsPresentation,
-  PresentationIndex
-} from '../presentations';
-import JudgePresentation from '../presentations/JudgePresentation';
-import ORUNStylePresentation from '../presentations/ORUNStylePresentation';
 import DualPanelPresentation from '../presentations/DualPanelPresentation';
 
 // HomeScreen component with modern biotech-inspired design
 const HomeScreen: React.FC = () => {
   const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number } | undefined>();
   const [currentView, setCurrentView] = useState<'home' | 'weather' | 'markets' | 'farms' | 'analytics'>('home');
-  const [showPresentations, setShowPresentations] = useState(false);
   const [currentPresentation, setCurrentPresentation] = useState<string | null>(null);
   const [isFirstVisit, setIsFirstVisit] = useState(false);
   
@@ -71,34 +60,14 @@ const HomeScreen: React.FC = () => {
   const { prices, loading: pricesLoading, error: pricesError } = useMarketPrices();
 
   // Handle presentation navigation
-  const handleStartPresentation = (presentationType: string) => {
-    setCurrentPresentation(presentationType);
-    setShowPresentations(false);
-  };
-
   const handleClosePresentation = () => {
     setCurrentPresentation(null);
-    setShowPresentations(false);
     // Mark presentation as seen for future visits
     if (isFirstVisit) {
       localStorage.setItem('maono-presentation-seen', 'true');
       setIsFirstVisit(false);
     }
   };
-
-  // Render presentations
-  if (showPresentations) {
-    return <PresentationIndex onClose={() => setShowPresentations(false)} onStartPresentation={handleStartPresentation} />;
-  }
-
-  if (currentPresentation === 'orun-style-presentation') {
-    return <ORUNStylePresentation onClose={handleClosePresentation} onOpenDashboard={() => {
-      handleClosePresentation();
-      // Mark presentation as seen and open dashboard
-      localStorage.setItem('maono-presentation-seen', 'true');
-      setIsFirstVisit(false);
-    }} />;
-  }
 
   if (currentPresentation === 'dual-panel-presentation') {
     return <DualPanelPresentation onClose={handleClosePresentation} onOpenDashboard={() => {
@@ -109,29 +78,6 @@ const HomeScreen: React.FC = () => {
     }} />;
   }
 
-  if (currentPresentation === 'judge-presentation') {
-    return <JudgePresentation onClose={handleClosePresentation} />;
-  }
-
-  if (currentPresentation === 'get-started') {
-    return <GetStartedPresentation onClose={handleClosePresentation} />;
-  }
-
-  if (currentPresentation === 'weather-intelligence') {
-    return <WeatherIntelligencePresentation onClose={handleClosePresentation} />;
-  }
-
-  if (currentPresentation === 'market-intelligence') {
-    return <MarketIntelligencePresentation onClose={handleClosePresentation} />;
-  }
-
-  if (currentPresentation === 'farm-management') {
-    return <FarmManagementPresentation onClose={handleClosePresentation} />;
-  }
-
-  if (currentPresentation === 'analytics') {
-    return <AnalyticsPresentation onClose={handleClosePresentation} />;
-  }
 
   // Render different pages based on current view
   if (currentView === 'weather') {
@@ -285,40 +231,6 @@ const HomeScreen: React.FC = () => {
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={() => setShowPresentations(true)}
-              sx={{ 
-                borderColor: 'primary.main',
-                color: 'primary.main',
-                '&:hover': { 
-                  backgroundColor: 'rgba(125, 211, 252, 0.1)',
-                  borderColor: 'primary.light'
-                }
-              }}
-            >
-              📚 Presentations
-            </Button>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={() => {
-                localStorage.removeItem('maono-presentation-seen');
-                setCurrentPresentation('orun-style-presentation');
-                setIsFirstVisit(true);
-              }}
-              sx={{ 
-                borderColor: 'secondary.main',
-                color: 'secondary.main',
-                '&:hover': { 
-                  backgroundColor: 'rgba(110, 231, 183, 0.1)',
-                  borderColor: 'secondary.light'
-                }
-              }}
-            >
-              🔄 Reset Presentation
-            </Button>
             <IconButton 
               onClick={() => setCurrentView('analytics')}
               sx={{ 
