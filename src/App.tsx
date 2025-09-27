@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import { Box } from '@mui/material';
 import { AgriculturalProvider } from './context/AgriculturalContext';
 import HomeScreen from './screens/HomeScreen';
+import LoadingScreen from './components/LoadingScreen';
 
 // Create modern ethereal green theme for MAONO
 const theme = createTheme({
@@ -200,6 +201,42 @@ const theme = createTheme({
 
 // Main App component following React Native patterns
 const App: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [showLoading, setShowLoading] = useState(true);
+
+  useEffect(() => {
+    // Check if user has seen the loading screen before
+    const hasSeenLoading = localStorage.getItem('maono-loading-seen');
+    if (hasSeenLoading) {
+      setIsLoading(false);
+      setShowLoading(false);
+    } else {
+      // Show loading screen for first-time visitors
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+        localStorage.setItem('maono-loading-seen', 'true');
+        setTimeout(() => setShowLoading(false), 500);
+      }, 8000); // 8 seconds loading time
+
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+    localStorage.setItem('maono-loading-seen', 'true');
+    setTimeout(() => setShowLoading(false), 500);
+  };
+
+  if (showLoading) {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <LoadingScreen onComplete={handleLoadingComplete} />
+      </ThemeProvider>
+    );
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
