@@ -762,6 +762,9 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
               borderRadius: '12px',
               overflow: 'hidden',
               backgroundColor: '#000',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
             {currentSlideData.videoUrl ? (
@@ -788,8 +791,9 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                     objectFit: 'contain',
                     borderRadius: '12px',
                     backgroundColor: '#000',
-                    width: '100%',
-                    height: 'auto',
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    display: 'block',
                   }}
                   onLoadStart={() => {
                     setIsVideoLoading(true);
