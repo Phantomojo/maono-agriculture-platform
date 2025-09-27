@@ -106,7 +106,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         'Only 4% of arable land irrigated',
         'Post-harvest losses up to 30%'
       ],
-      videoUrl: '/videos/agricultural-challenges.mp4',
+      videoUrl: null, // Video not available yet
       videoPoster: '/images/challenges-poster.jpg',
       duration: 10000,
       callToAction: 'See How MAONO Solves These Problems'
@@ -175,7 +175,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         '50% Less Post-Harvest Loss',
         '80% Income Improvement'
       ],
-      videoUrl: '/videos/impact-stories.mp4',
+      videoUrl: null, // Video not available yet
       videoPoster: '/images/impact-poster.jpg',
       duration: 12000,
       callToAction: 'Join Our Success Stories'
@@ -708,108 +708,154 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
               backgroundColor: '#000',
             }}
           >
-            <video
-              ref={videoRef}
-              width="100%"
-              height="100%"
-              poster={currentSlideData.videoPoster}
-              muted={isVideoMuted}
-              style={{
-                objectFit: 'cover',
-                borderRadius: '12px',
-              }}
-              onPlay={() => setIsVideoPlaying(true)}
-              onPause={() => setIsVideoPlaying(false)}
-              onEnded={() => {
-                if (currentSlide < slides.length - 1) {
-                  handleNextSlide();
-                }
-              }}
-            >
-              <source src={currentSlideData.videoUrl} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+            {currentSlideData.videoUrl ? (
+              <video
+                ref={videoRef}
+                width="100%"
+                height="100%"
+                poster={currentSlideData.videoPoster}
+                muted={isVideoMuted}
+                style={{
+                  objectFit: 'cover',
+                  borderRadius: '12px',
+                }}
+                onPlay={() => setIsVideoPlaying(true)}
+                onPause={() => setIsVideoPlaying(false)}
+                onEnded={() => {
+                  if (currentSlide < slides.length - 1) {
+                    handleNextSlide();
+                  }
+                }}
+              >
+                <source src={currentSlideData.videoUrl} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <Box
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'rgba(17, 100, 102, 0.1)',
+                  borderRadius: '12px',
+                  border: '2px dashed rgba(217, 176, 140, 0.3)',
+                  p: 4,
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{
+                    color: '#D9B08C',
+                    fontWeight: 600,
+                    mb: 2,
+                    textAlign: 'center',
+                  }}
+                >
+                  📹 Video Coming Soon
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: '#D1E8E2',
+                    textAlign: 'center',
+                    opacity: 0.8,
+                  }}
+                >
+                  This slide's video is being prepared and will be available soon.
+                </Typography>
+              </Box>
+            )}
 
-            {/* Video Overlay Controls */}
-            <Box
-              sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.3) 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                opacity: isVideoPlaying ? 0 : 1,
-                transition: 'opacity 0.3s ease',
-                '&:hover': {
-                  opacity: 1,
-                },
-              }}
-            >
-              <IconButton
-                onClick={isVideoPlaying ? handlePause : handlePlay}
+            {/* Video Overlay Controls - Only show when video exists */}
+            {currentSlideData.videoUrl && (
+              <Box
                 sx={{
-                  backgroundColor: 'rgba(217, 176, 140, 0.9)',
-                  color: '#010E0E',
-                  width: 80,
-                  height: 80,
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.3) 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  opacity: isVideoPlaying ? 0 : 1,
+                  transition: 'opacity 0.3s ease',
                   '&:hover': {
-                    backgroundColor: 'rgba(217, 176, 140, 1)',
+                    opacity: 1,
                   },
                 }}
               >
-                {isVideoPlaying ? <PauseIcon sx={{ fontSize: 40 }} /> : <PlayIcon sx={{ fontSize: 40 }} />}
-              </IconButton>
-            </Box>
+                <IconButton
+                  onClick={isVideoPlaying ? handlePause : handlePlay}
+                  sx={{
+                    backgroundColor: 'rgba(217, 176, 140, 0.9)',
+                    color: '#010E0E',
+                    width: 80,
+                    height: 80,
+                    '&:hover': {
+                      backgroundColor: 'rgba(217, 176, 140, 1)',
+                    },
+                  }}
+                >
+                  {isVideoPlaying ? <PauseIcon sx={{ fontSize: 40 }} /> : <PlayIcon sx={{ fontSize: 40 }} />}
+                </IconButton>
+              </Box>
+            )}
 
-            {/* Video Controls */}
-            <Box
-              sx={{
-                position: 'absolute',
-                bottom: 16,
-                right: 16,
-                display: 'flex',
-                gap: 1,
-                opacity: 0.8,
-              }}
-            >
-              <IconButton
-                onClick={handleVideoToggle}
+            {/* Video Controls - Only show when video exists */}
+            {currentSlideData.videoUrl && (
+              <Box
                 sx={{
-                  backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                  color: '#D1E8E2',
-                  '&:hover': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                  },
+                  position: 'absolute',
+                  bottom: 16,
+                  right: 16,
+                  display: 'flex',
+                  gap: 1,
+                  opacity: 0.8,
                 }}
               >
-                {isVideoMuted ? <VolumeOffIcon /> : <VolumeIcon />}
-              </IconButton>
-              <IconButton
-                onClick={handlePictureInPicture}
-                sx={{
-                  backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                  color: '#D1E8E2',
-                  '&:hover': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                  },
-                }}
-              >
-                <PictureInPictureIcon />
-              </IconButton>
-            </Box>
+                <IconButton
+                  onClick={handleVideoToggle}
+                  sx={{
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    color: '#D1E8E2',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                    },
+                  }}
+                >
+                  {isVideoMuted ? <VolumeOffIcon /> : <VolumeIcon />}
+                </IconButton>
+                <IconButton
+                  onClick={handlePictureInPicture}
+                  sx={{
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    color: '#D1E8E2',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                    },
+                  }}
+                >
+                  <PictureInPictureIcon />
+                </IconButton>
+              </Box>
+            )}
           </Box>
 
           {/* Video Info */}
           <Box sx={{ mt: 2, textAlign: 'center' }}>
             <Typography variant="body2" sx={{ color: '#D9B08C', fontWeight: 600 }}>
-              {currentSlideData.title} - Video Presentation
+              {currentSlideData.title} - {currentSlideData.videoUrl ? 'Video Presentation' : 'Content Presentation'}
             </Typography>
             <Typography variant="caption" sx={{ color: '#8A9B9B' }}>
-              Click to play/pause • Use controls for volume and picture-in-picture
+              {currentSlideData.videoUrl 
+                ? 'Click to play/pause • Use controls for volume and picture-in-picture'
+                : 'Text content with detailed information and key points'
+              }
             </Typography>
           </Box>
         </Box>

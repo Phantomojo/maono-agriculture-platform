@@ -1,0 +1,196 @@
+# 🎬 MAONO Presentation Slides Content
+
+## 📋 **Slide 1: Welcome to MAONO**
+**Video File:** `maono-intro.mp4`
+**Duration:** 8 minutes
+
+### **Title:** Welcome to MAONO
+### **Subtitle:** Revolutionizing Agriculture with AI-Powered Intelligence
+
+### **Main Content:**
+MAONO (Swahili for "vision") is transforming African agriculture through cutting-edge technology, connecting farmers with AI-powered insights, real-time market data, and a global agricultural community.
+
+### **Key Features:**
+• AI-powered weather predictions with 95% accuracy
+• Real-time market intelligence and pricing
+• Smart farming tools and crop monitoring
+• Global farmer community and knowledge sharing
+• Financial services and micro-loan integration
+
+### **Impact Metrics:**
+• 50K+ Active Farmers
+• 15+ Countries
+• 40% Yield Increase
+• 95% Accuracy Rate
+
+### **Call to Action:** Join the Agricultural Revolution
+
+---
+
+## 📋 **Slide 2: The Challenge**
+**Video File:** `agricultural-challenges.mp4`
+**Duration:** 10 minutes
+
+### **Title:** The Challenge
+### **Subtitle:** African Agriculture Faces Critical Issues
+
+### **Main Content:**
+Smallholder farmers across Africa struggle with unpredictable weather, limited market access, lack of modern farming techniques, and financial constraints that prevent them from maximizing their potential.
+
+### **Key Problems:**
+• Unpredictable weather patterns affecting crop yields
+• Limited access to real-time market information
+• Lack of modern farming techniques and technology
+• Financial barriers preventing growth and investment
+• Isolation from agricultural knowledge and best practices
+
+### **Impact Metrics:**
+• 60% of African workforce in agriculture
+• 70% of food production by smallholders
+• Only 4% of arable land irrigated
+• Post-harvest losses up to 30%
+
+### **Call to Action:** See How MAONO Solves These Problems
+
+---
+
+## 📋 **Slide 3: The MAONO Solution**
+**Video File:** `maono-solution.mp4`
+**Duration:** 12 minutes
+
+### **Title:** The MAONO Solution
+### **Subtitle:** AI-Powered Agricultural Intelligence Platform
+
+### **Main Content:**
+MAONO leverages artificial intelligence, satellite data, and mobile technology to provide farmers with actionable insights, market connections, and the tools they need to succeed.
+
+### **Solution Features:**
+• AI weather predictions and planting recommendations
+• Real-time market prices and buyer connections
+• Crop health monitoring and disease detection
+• Financial services and micro-loan access
+• Community platform for knowledge sharing
+
+### **Technology Highlights:**
+• 95% Weather Prediction Accuracy
+• Real-time Market Data
+• AI Disease Detection
+• Mobile-First Design
+
+### **Call to Action:** Experience the Future of Farming
+
+---
+
+## 📋 **Slide 4: Cutting-Edge Technology**
+**Video File:** `technology-stack.mp4`
+**Duration:** 10 minutes
+
+### **Title:** Cutting-Edge Technology
+### **Subtitle:** Advanced AI and Data Science
+
+### **Main Content:**
+MAONO combines machine learning algorithms, satellite imagery, weather station data, and mobile technology to deliver precise agricultural insights and recommendations.
+
+### **Technology Stack:**
+• Machine learning algorithms for weather prediction
+• Satellite imagery analysis for crop monitoring
+• IoT sensor integration for real-time data
+• Mobile app with offline capabilities
+• Blockchain for transparent transactions
+
+### **Key Technologies:**
+• Machine Learning AI
+• Satellite Data Integration
+• IoT Sensor Networks
+• Blockchain Technology
+
+### **Call to Action:** Explore Our Technology
+
+---
+
+## 📋 **Slide 5: Proven Impact**
+**Video File:** `impact-stories.mp4`
+**Duration:** 12 minutes
+
+### **Title:** Proven Impact
+### **Subtitle:** Transforming Lives and Communities
+
+### **Main Content:**
+MAONO has already helped thousands of farmers increase their yields, improve their income, and build sustainable agricultural practices across Africa.
+
+### **Impact Results:**
+• 40% average increase in crop yields
+• 60% improvement in market access
+• 50% reduction in post-harvest losses
+• 80% of users report increased income
+• 95% user satisfaction rate
+
+### **Key Metrics:**
+• 40% Yield Increase
+• 60% Better Market Access
+• 50% Less Post-Harvest Loss
+• 80% Income Improvement
+
+### **Call to Action:** Join Our Success Stories
+
+---
+
+## 📋 **Slide 6: The Future of Agriculture**
+**Video File:** `future-vision.mp4`
+**Duration:** 10 minutes
+
+### **Title:** The Future of Agriculture
+### **Subtitle:** Scaling Across Africa and Beyond
+
+### **Main Content:**
+MAONO is expanding rapidly, with plans to reach 1 million farmers across Africa by 2026, creating a sustainable agricultural ecosystem that benefits everyone.
+
+### **Future Plans:**
+• Expansion to 25+ African countries
+• Integration with government agricultural programs
+• Partnerships with international organizations
+• Development of new AI capabilities
+• Creation of agricultural data marketplace
+
+### **Vision Metrics:**
+• 1M Farmers by 2026
+• 25+ Countries
+• Government Partnerships
+• Data Marketplace
+
+### **Call to Action:** Be Part of the Future
+
+---
+
+## 🎥 **Video Production Notes:**
+
+### **File Naming Convention:**
+- `maono-intro.mp4` (8 minutes)
+- `agricultural-challenges.mp4` (10 minutes)
+- `maono-solution.mp4` (12 minutes)
+- `technology-stack.mp4` (10 minutes)
+- `impact-stories.mp4` (12 minutes)
+- `future-vision.mp4` (10 minutes)
+
+### **Total Presentation Time:** ~62 minutes
+
+### **Content Focus for Each Video:**
+1. **Introduction** - Welcome, mission, key stats
+2. **Problem** - Agricultural challenges in Africa
+3. **Solution** - How MAONO addresses these challenges
+4. **Technology** - Technical capabilities and features
+5. **Impact** - Real results and success stories
+6. **Future** - Vision and expansion plans
+
+### **Speaking Style Guidelines:**
+- Professional, confident tone
+- Clear, moderate speaking pace
+- Enthusiastic about MAONO's potential
+- Direct eye contact with camera
+- Natural hand gestures
+- Business casual attire
+- Well-lit, professional background
+
+---
+
+**Note:** Each video should be synchronized with its corresponding slide content, providing detailed explanations and insights that complement the text displayed on the left panel of the dual-panel presentation format.
