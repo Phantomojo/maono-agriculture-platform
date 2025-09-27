@@ -44,14 +44,14 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
 
   useEffect(() => {
     // Load YouTube API if not already loaded
-    if (!window.YT) {
+    if (!(window as any).YT) {
       const script = document.createElement('script');
       script.src = 'https://www.youtube.com/iframe_api';
       script.async = true;
       document.head.appendChild(script);
 
       script.onload = () => {
-        window.YT.ready(() => {
+        (window as any).YT.ready(() => {
           initializePlayer();
         });
       };
@@ -74,7 +74,7 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
       return;
     }
 
-    const playerInstance = new window.YT.Player(`youtube-player-${videoId}`, {
+    const playerInstance = new (window as any).YT.Player(`youtube-player-${videoId}`, {
       height: '100%',
       width: '100%',
       videoId: youtubeVideoId,
@@ -98,16 +98,16 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
         },
         onStateChange: (event: any) => {
           switch (event.data) {
-            case window.YT.PlayerState.PLAYING:
+            case (window as any).YT.PlayerState.PLAYING:
               onPlay?.();
               break;
-            case window.YT.PlayerState.PAUSED:
+            case (window as any).YT.PlayerState.PAUSED:
               onPause?.();
               break;
-            case window.YT.PlayerState.ENDED:
+            case (window as any).YT.PlayerState.ENDED:
               onEnded?.();
               break;
-            case window.YT.PlayerState.ERROR:
+            case (window as any).YT.PlayerState.ERROR:
               setHasError(true);
               setIsLoading(false);
               onError?.('YouTube player error');
