@@ -12,9 +12,10 @@
     <script defer="defer" src="/static/js/main.6027f53a.js"></script>
     <link href="/static/css/main.6f28261c.css" rel="stylesheet"/>
     <script>
-        // Clear storage and force presentation selection
+        // Clear all MAONO flags to ensure fresh experience
         localStorage.removeItem('maono-presentation-seen');
-        console.log('Storage cleared - will show presentation selection');
+        localStorage.removeItem('maono-loading-seen');
+        console.log('Storage cleared - will show loading screen and presentation');
     </script>
 </head>
 <body>

@@ -205,25 +205,17 @@ const App: React.FC = () => {
   const [showLoading, setShowLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user has seen the loading screen before
-    const hasSeenLoading = localStorage.getItem('maono-loading-seen');
+    // Always show loading screen (remove localStorage check for now)
+    localStorage.removeItem('maono-loading-seen');
     
-    // Force show loading screen for testing (remove this line in production)
-    // localStorage.removeItem('maono-loading-seen');
-    
-    if (hasSeenLoading) {
+    // Show loading screen for proper experience
+    const timer = setTimeout(() => {
       setIsLoading(false);
-      setShowLoading(false);
-    } else {
-      // Show loading screen for first-time visitors
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-        localStorage.setItem('maono-loading-seen', 'true');
-        setTimeout(() => setShowLoading(false), 500);
-      }, 8000); // Back to 8 seconds for proper loading experience
+      localStorage.setItem('maono-loading-seen', 'true');
+      setTimeout(() => setShowLoading(false), 500);
+    }, 8000); // 8 seconds for proper loading experience
 
-      return () => clearTimeout(timer);
-    }
+    return () => clearTimeout(timer);
   }, []);
 
   const handleLoadingComplete = () => {
