@@ -88,7 +88,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         '40% Yield Increase',
         '95% Accuracy Rate'
       ],
-      videoUrl: '/videos/maono-intro.mp4',
+      videoUrl: '/videos/optimized/maono-intro.mp4',
       videoPoster: '/images/maono-intro-poster.jpg',
       duration: 8000,
       callToAction: 'Join the Agricultural Revolution'
@@ -111,7 +111,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         'Only 4% of arable land irrigated',
         'Post-harvest losses up to 30%'
       ],
-      videoUrl: '/videos/agricultural-challenges.mp4',
+      videoUrl: '/videos/optimized/agricultural-challenges.mp4',
       videoPoster: '/images/challenges-poster.jpg',
       duration: 10000,
       callToAction: 'See How MAONO Solves These Problems'
@@ -134,7 +134,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         'AI Disease Detection',
         'Mobile-First Design'
       ],
-      videoUrl: '/videos/maono-solution.mp4',
+      videoUrl: '/videos/optimized/maono-solution.mp4',
       videoPoster: '/images/solution-poster.jpg',
       duration: 12000,
       callToAction: 'Experience the Future of Farming'
@@ -157,7 +157,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         'IoT Sensor Networks',
         'Blockchain Technology'
       ],
-      videoUrl: '/videos/technology-stack.mp4',
+      videoUrl: '/videos/optimized/technology-stack.mp4',
       videoPoster: '/images/technology-poster.jpg',
       duration: 10000,
       callToAction: 'Explore Our Technology'
@@ -180,7 +180,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         'Personal Farm Expert',
         'Blockchain Fair Pricing'
       ],
-      videoUrl: '/videos/impact-stories.mp4',
+      videoUrl: '/videos/optimized/impact-stories.mp4',
       videoPoster: '/images/impact-poster.jpg',
       duration: 12000,
       callToAction: 'Join Our Success Stories'
@@ -203,7 +203,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         'Government Partnerships',
         'Data Marketplace'
       ],
-      videoUrl: '/videos/future-vision.mp4',
+      videoUrl: '/videos/optimized/future-vision.mp4',
       videoPoster: '/images/future-poster.jpg',
       duration: 10000,
       callToAction: 'Be Part of the Future'
