@@ -241,7 +241,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
     }
   }, [isPlaying, currentSlide]);
 
-  // Video synchronization - improved to prevent conflicts
+  // Video synchronization - optimized for faster loading
   useEffect(() => {
     // Clear any existing timers first
     if (progressRef.current) {
@@ -254,26 +254,34 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
       setVideoError(null);
       
       if (isPlaying) {
-        // Reset video state
-        videoRef.current.currentTime = 0;
-        videoRef.current.load();
-        
-        // Wait for video to be ready before playing
-        const playVideo = () => {
-          if (videoRef.current && videoRef.current.readyState >= 2) {
-            videoRef.current.play().catch(error => {
-              console.error('Video play error:', error);
-              setVideoError('Failed to play video');
-              setIsVideoLoading(false);
-            });
-          } else {
-            // Wait a bit more for video to load
-            setTimeout(playVideo, 200);
-          }
-        };
-        
-        // Small delay to ensure video is ready
-        setTimeout(playVideo, 100);
+        // Don't reset video if it's already loaded
+        if (videoRef.current.readyState >= 2) {
+          videoRef.current.currentTime = 0;
+          videoRef.current.play().catch(error => {
+            console.error('Video play error:', error);
+            setVideoError('Failed to play video');
+            setIsVideoLoading(false);
+          });
+        } else {
+          // Only load if not already loaded
+          videoRef.current.load();
+          
+          // Faster loading check
+          const playVideo = () => {
+            if (videoRef.current && videoRef.current.readyState >= 1) {
+              videoRef.current.currentTime = 0;
+              videoRef.current.play().catch(error => {
+                console.error('Video play error:', error);
+                setVideoError('Failed to play video');
+                setIsVideoLoading(false);
+              });
+            } else {
+              setTimeout(playVideo, 50); // Reduced from 200ms to 50ms
+            }
+          };
+          
+          setTimeout(playVideo, 10); // Reduced from 100ms to 10ms
+        }
       } else {
         videoRef.current.pause();
         setIsVideoPlaying(false);
@@ -761,6 +769,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                 height="100%"
                 poster={currentSlideData.videoPoster}
                 muted={isVideoMuted}
+                preload="metadata"
                 style={{
                   objectFit: 'cover',
                   borderRadius: '12px',
@@ -794,14 +803,14 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                 }}
                 onEnded={() => {
                   setIsVideoPlaying(false);
-                  // Small delay before advancing to ensure smooth transition
+                  // Minimal delay for smooth transition
                   setTimeout(() => {
                     if (currentSlide < slides.length - 1) {
                       handleNextSlide();
                     } else {
                       handleFinishPresentation();
                     }
-                  }, 500);
+                  }, 100); // Reduced from 500ms to 100ms
                 }}
               >
                 <source src={currentSlideData.videoUrl} type="video/mp4" />

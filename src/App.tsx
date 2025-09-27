@@ -215,8 +215,8 @@ const App: React.FC = () => {
       const timer = setTimeout(() => {
         setIsLoading(false);
         localStorage.setItem('maono-loading-seen', 'true');
-        setTimeout(() => setShowLoading(false), 500);
-      }, 8000); // 8 seconds loading time
+        setTimeout(() => setShowLoading(false), 200);
+      }, 4000); // Reduced from 8 seconds to 4 seconds
 
       return () => clearTimeout(timer);
     }
