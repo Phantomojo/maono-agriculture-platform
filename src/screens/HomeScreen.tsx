@@ -29,6 +29,7 @@ import {
 } from '../presentations';
 import JudgePresentation from '../presentations/JudgePresentation';
 import ORUNStylePresentation from '../presentations/ORUNStylePresentation';
+import DualPanelPresentation from '../presentations/DualPanelPresentation';
 
 // HomeScreen component with modern biotech-inspired design
 const HomeScreen: React.FC = () => {
@@ -92,6 +93,15 @@ const HomeScreen: React.FC = () => {
 
   if (currentPresentation === 'orun-style-presentation') {
     return <ORUNStylePresentation onClose={handleClosePresentation} onOpenDashboard={() => {
+      handleClosePresentation();
+      // Mark presentation as seen and open dashboard
+      localStorage.setItem('maono-presentation-seen', 'true');
+      setIsFirstVisit(false);
+    }} />;
+  }
+
+  if (currentPresentation === 'dual-panel-presentation') {
+    return <DualPanelPresentation onClose={handleClosePresentation} onOpenDashboard={() => {
       handleClosePresentation();
       // Mark presentation as seen and open dashboard
       localStorage.setItem('maono-presentation-seen', 'true');
