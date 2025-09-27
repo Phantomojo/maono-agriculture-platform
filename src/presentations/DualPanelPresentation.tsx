@@ -736,11 +736,11 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
           <ArrowForwardIcon />
         </IconButton>
 
-        {/* Right Panel - Video (Larger) */}
+        {/* Right Panel - Video (Portrait) */}
         <Box
           sx={{
-            width: '500px', // Increased from 400px
-            height: '600px', // Set specific height for better proportions
+            width: '350px', // Narrower for portrait
+            height: '600px', // Taller for portrait
             display: 'flex',
             flexDirection: 'column',
             p: 2,
@@ -766,7 +766,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              aspectRatio: '4/3', // Better aspect ratio for video display
+              aspectRatio: '9/16', // Portrait aspect ratio for mobile videos
             }}
           >
             {currentSlideData.videoUrl ? (
