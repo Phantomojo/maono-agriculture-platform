@@ -109,7 +109,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         'Only 4% of arable land irrigated',
         'Post-harvest losses up to 30%'
       ],
-      videoUrl: null, // Video not available yet
+      videoUrl: '/videos/agricultural-challenges.mp4',
       videoPoster: '/images/challenges-poster.jpg',
       duration: 10000,
       callToAction: 'See How MAONO Solves These Problems'
@@ -241,15 +241,22 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
     }
   }, [isPlaying, currentSlide]);
 
-  // Video synchronization
+  // Video synchronization - improved to prevent conflicts
   useEffect(() => {
+    // Clear any existing timers first
+    if (progressRef.current) {
+      clearInterval(progressRef.current);
+      progressRef.current = undefined;
+    }
+
     if (videoRef.current && currentSlideData.videoUrl) {
       setIsVideoLoading(true);
       setVideoError(null);
       
       if (isPlaying) {
-        videoRef.current.currentTime = 0; // Reset video to beginning
-        videoRef.current.load(); // Reload video to ensure it's ready
+        // Reset video state
+        videoRef.current.currentTime = 0;
+        videoRef.current.load();
         
         // Wait for video to be ready before playing
         const playVideo = () => {
@@ -261,16 +268,18 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
             });
           } else {
             // Wait a bit more for video to load
-            setTimeout(playVideo, 100);
+            setTimeout(playVideo, 200);
           }
         };
         
-        playVideo();
+        // Small delay to ensure video is ready
+        setTimeout(playVideo, 100);
       } else {
         videoRef.current.pause();
         setIsVideoPlaying(false);
       }
     }
+    
     // Reset progress when slide changes
     setProgress(0);
   }, [isPlaying, currentSlide]);
@@ -364,7 +373,18 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
     setIsPlaying(false);
     setCurrentSlide(0);
     setProgress(0);
+    setIsVideoPlaying(false);
+    setIsVideoLoading(false);
+    setVideoError(null);
+    
+    // Clear any running timers
+    if (progressRef.current) {
+      clearInterval(progressRef.current);
+      progressRef.current = undefined;
+    }
+    
     if (videoRef.current) {
+      videoRef.current.pause();
       videoRef.current.currentTime = 0;
     }
   };
@@ -745,30 +765,43 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                   objectFit: 'cover',
                   borderRadius: '12px',
                 }}
-                onLoadStart={() => setIsVideoLoading(true)}
-                onCanPlay={() => setIsVideoLoading(false)}
+                onLoadStart={() => {
+                  setIsVideoLoading(true);
+                  setVideoError(null);
+                }}
+                onCanPlay={() => {
+                  setIsVideoLoading(false);
+                }}
                 onPlay={() => {
                   setIsVideoPlaying(true);
                   setIsVideoLoading(false);
+                  setVideoError(null);
                 }}
-                onPause={() => setIsVideoPlaying(false)}
+                onPause={() => {
+                  setIsVideoPlaying(false);
+                }}
                 onError={(e) => {
                   console.error('Video error:', e);
                   setVideoError('Video failed to load');
                   setIsVideoLoading(false);
+                  setIsVideoPlaying(false);
                 }}
                 onTimeUpdate={() => {
-                  if (videoRef.current) {
+                  if (videoRef.current && videoRef.current.duration) {
                     const progress = (videoRef.current.currentTime / videoRef.current.duration) * 100;
-                    setProgress(progress);
+                    setProgress(Math.min(progress, 100));
                   }
                 }}
                 onEnded={() => {
-                  if (currentSlide < slides.length - 1) {
-                    handleNextSlide();
-                  } else {
-                    handleFinishPresentation();
-                  }
+                  setIsVideoPlaying(false);
+                  // Small delay before advancing to ensure smooth transition
+                  setTimeout(() => {
+                    if (currentSlide < slides.length - 1) {
+                      handleNextSlide();
+                    } else {
+                      handleFinishPresentation();
+                    }
+                  }, 500);
                 }}
               >
                 <source src={currentSlideData.videoUrl} type="video/mp4" />
