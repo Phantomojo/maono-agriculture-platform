@@ -50,20 +50,7 @@ interface PresentationSlide {
   callToAction?: string;
 }
 
-// YouTube video IDs - Replace with your actual YouTube video IDs
-const YOUTUBE_VIDEOS: Record<string, string> = {
-  'intro': 'dQw4w9WgXcQ', // Replace with your YouTube video ID
-  'problem': 'dQw4w9WgXcQ', // Replace with your YouTube video ID
-  'solution': 'dQw4w9WgXcQ', // Replace with your YouTube video ID
-  'technology': 'dQw4w9WgXcQ', // Replace with your YouTube video ID
-  'impact': 'dQw4w9WgXcQ', // Replace with your YouTube video ID
-  'future': 'dQw4w9WgXcQ', // Replace with your YouTube video ID
-};
-
-// Get YouTube video ID for a slide
-const getYouTubeVideoId = (slideId: string): string => {
-  return YOUTUBE_VIDEOS[slideId] || 'dQw4w9WgXcQ'; // Fallback to default
-};
+// Using local videos directly - no YouTube integration for now
 
 const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, onOpenDashboard }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -787,86 +774,60 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                   overflow: 'hidden',
                 }}
               >
-                {/* YouTube Embed for better performance */}
-                <iframe
+                {/* Use your actual local videos */}
+                <video
+                  ref={videoRef}
                   width="100%"
                   height="100%"
-                  src={`https://www.youtube.com/embed/${getYouTubeVideoId(currentSlideData.id)}?autoplay=${isPlaying ? 1 : 0}&mute=${isVideoMuted ? 1 : 0}&controls=1&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&fs=1&cc_load_policy=0&playsinline=1`}
-                  title={currentSlideData.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
+                  poster={currentSlideData.videoPoster}
+                  muted={isVideoMuted}
+                  preload="metadata"
+                  controls
                   style={{
+                    objectFit: 'cover',
                     borderRadius: '12px',
                   }}
-                  onLoad={() => {
+                  onLoadStart={() => {
+                    setIsVideoLoading(true);
+                    setVideoError(null);
+                  }}
+                  onCanPlay={() => {
+                    setIsVideoLoading(false);
+                  }}
+                  onPlay={() => {
+                    setIsVideoPlaying(true);
                     setIsVideoLoading(false);
                     setVideoError(null);
                   }}
-                  onError={() => {
-                    setVideoError('YouTube video failed to load');
-                    setIsVideoLoading(false);
+                  onPause={() => {
+                    setIsVideoPlaying(false);
                   }}
-                />
-                
-                {/* Fallback to local video if YouTube fails */}
-                {videoError && (
-                  <video
-                    ref={videoRef}
-                    width="100%"
-                    height="100%"
-                    poster={currentSlideData.videoPoster}
-                    muted={isVideoMuted}
-                    preload="metadata"
-                    style={{
-                      objectFit: 'cover',
-                      borderRadius: '12px',
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                    }}
-                    onLoadStart={() => {
-                      setIsVideoLoading(true);
-                      setVideoError(null);
-                    }}
-                    onCanPlay={() => {
-                      setIsVideoLoading(false);
-                    }}
-                    onPlay={() => {
-                      setIsVideoPlaying(true);
-                      setIsVideoLoading(false);
-                      setVideoError(null);
-                    }}
-                    onPause={() => {
-                      setIsVideoPlaying(false);
-                    }}
-                    onError={(e) => {
-                      console.error('Video error:', e);
-                      setVideoError('Video failed to load');
-                      setIsVideoLoading(false);
-                      setIsVideoPlaying(false);
-                    }}
-                    onTimeUpdate={() => {
-                      if (videoRef.current && videoRef.current.duration) {
-                        const progress = (videoRef.current.currentTime / videoRef.current.duration) * 100;
-                        setProgress(Math.min(progress, 100));
+                  onError={(e) => {
+                    console.error('Video error:', e);
+                    setVideoError('Video failed to load');
+                    setIsVideoLoading(false);
+                    setIsVideoPlaying(false);
+                  }}
+                  onTimeUpdate={() => {
+                    if (videoRef.current && videoRef.current.duration) {
+                      const progress = (videoRef.current.currentTime / videoRef.current.duration) * 100;
+                      setProgress(Math.min(progress, 100));
+                    }
+                  }}
+                  onEnded={() => {
+                    setIsVideoPlaying(false);
+                    setTimeout(() => {
+                      if (currentSlide < slides.length - 1) {
+                        handleNextSlide();
+                      } else {
+                        handleFinishPresentation();
                       }
-                    }}
-                    onEnded={() => {
-                      setIsVideoPlaying(false);
-                      setTimeout(() => {
-                        if (currentSlide < slides.length - 1) {
-                          handleNextSlide();
-                        } else {
-                          handleFinishPresentation();
-                        }
-                      }, 100);
-                    }}
-                  >
-                    <source src={currentSlideData.videoUrl} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                )}
+                    }, 100);
+                  }}
+                >
+                  <source src={currentSlideData.videoUrl} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
               </Box>
             ) : (
               <Box
