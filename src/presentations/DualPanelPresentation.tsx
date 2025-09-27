@@ -56,6 +56,8 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
@@ -247,6 +249,74 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
     }
   }, [isPlaying, currentSlide]);
 
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      switch (event.key) {
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          event.preventDefault();
+          handlePrevSlide();
+          break;
+        case 'ArrowRight':
+        case 'ArrowDown':
+        case ' ':
+          event.preventDefault();
+          handleNextSlide();
+          break;
+        case 'Escape':
+          event.preventDefault();
+          onClose();
+          break;
+        case 'Enter':
+          event.preventDefault();
+          if (isPlaying) {
+            handlePause();
+          } else {
+            handlePlay();
+          }
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+    return () => document.removeEventListener('keydown', handleKeyPress);
+  }, [currentSlide, isPlaying]);
+
+  // Touch/Swipe handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      handleNextSlide();
+    } else if (isRightSwipe) {
+      handlePrevSlide();
+    }
+  };
+
+  // Mouse wheel navigation
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    if (e.deltaY > 0) {
+      handleNextSlide();
+    } else if (e.deltaY < 0) {
+      handlePrevSlide();
+    }
+  };
+
   const handlePlay = () => {
     setIsPlaying(true);
   };
@@ -331,6 +401,10 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         display: 'flex',
         flexDirection: 'column',
       }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onWheel={handleWheel}
     >
       {/* Header */}
       <Box
@@ -347,7 +421,10 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
           <Typography variant="h6" sx={{ color: '#D9B08C', fontWeight: 600 }}>
             MAONO Agricultural Intelligence - Dual Panel Presentation
           </Typography>
-          <Box sx={{ display: 'flex', gap: 1 }}>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+            <Typography variant="caption" sx={{ color: '#8A9B9B', mr: 2, display: { xs: 'none', sm: 'block' } }}>
+              ← → Navigate • Space Play/Pause • Esc Close
+            </Typography>
             <IconButton onClick={handleFullscreen} sx={{ color: '#D1E8E2' }}>
               <FullscreenIcon />
             </IconButton>
