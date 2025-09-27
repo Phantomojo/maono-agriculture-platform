@@ -7,6 +7,7 @@ Automatically uploads all presentation videos to YouTube
 import os
 import sys
 import subprocess
+import json
 from pathlib import Path
 
 def install_youtube_upload():
