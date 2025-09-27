@@ -17,6 +17,7 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
+  CircularProgress,
 } from '@mui/material';
 import {
   PlayArrow as PlayIcon,
@@ -56,6 +57,8 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isVideoLoading, setIsVideoLoading] = useState(false);
+  const [videoError, setVideoError] = useState<string | null>(null);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -240,11 +243,29 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
 
   // Video synchronization
   useEffect(() => {
-    if (videoRef.current) {
+    if (videoRef.current && currentSlideData.videoUrl) {
+      setIsVideoLoading(true);
+      setVideoError(null);
+      
       if (isPlaying) {
         videoRef.current.currentTime = 0; // Reset video to beginning
-        videoRef.current.play();
-        setIsVideoPlaying(true);
+        videoRef.current.load(); // Reload video to ensure it's ready
+        
+        // Wait for video to be ready before playing
+        const playVideo = () => {
+          if (videoRef.current && videoRef.current.readyState >= 2) {
+            videoRef.current.play().catch(error => {
+              console.error('Video play error:', error);
+              setVideoError('Failed to play video');
+              setIsVideoLoading(false);
+            });
+          } else {
+            // Wait a bit more for video to load
+            setTimeout(playVideo, 100);
+          }
+        };
+        
+        playVideo();
       } else {
         videoRef.current.pause();
         setIsVideoPlaying(false);
@@ -724,8 +745,18 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                   objectFit: 'cover',
                   borderRadius: '12px',
                 }}
-                onPlay={() => setIsVideoPlaying(true)}
+                onLoadStart={() => setIsVideoLoading(true)}
+                onCanPlay={() => setIsVideoLoading(false)}
+                onPlay={() => {
+                  setIsVideoPlaying(true);
+                  setIsVideoLoading(false);
+                }}
                 onPause={() => setIsVideoPlaying(false)}
+                onError={(e) => {
+                  console.error('Video error:', e);
+                  setVideoError('Video failed to load');
+                  setIsVideoLoading(false);
+                }}
                 onTimeUpdate={() => {
                   if (videoRef.current) {
                     const progress = (videoRef.current.currentTime / videoRef.current.duration) * 100;
@@ -782,8 +813,79 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
               </Box>
             )}
 
-            {/* Video Overlay Controls - Only show when video exists */}
-            {currentSlideData.videoUrl && (
+            {/* Video Loading State */}
+            {currentSlideData.videoUrl && isVideoLoading && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                  borderRadius: '12px',
+                }}
+              >
+                <Box sx={{ textAlign: 'center' }}>
+                  <CircularProgress sx={{ color: '#D9B08C', mb: 2 }} />
+                  <Typography variant="body2" sx={{ color: '#D1E8E2' }}>
+                    Loading video...
+                  </Typography>
+                </Box>
+              </Box>
+            )}
+
+            {/* Video Error State */}
+            {currentSlideData.videoUrl && videoError && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                  borderRadius: '12px',
+                }}
+              >
+                <Box sx={{ textAlign: 'center', p: 2 }}>
+                  <Typography variant="h6" sx={{ color: '#F87171', mb: 1 }}>
+                    ⚠️ Video Error
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#D1E8E2', mb: 2 }}>
+                    {videoError}
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    onClick={() => {
+                      setVideoError(null);
+                      if (videoRef.current) {
+                        videoRef.current.load();
+                      }
+                    }}
+                    sx={{
+                      backgroundColor: '#D9B08C',
+                      color: '#010E0E',
+                      '&:hover': {
+                        backgroundColor: '#E5C4A0',
+                      },
+                    }}
+                  >
+                    Retry
+                  </Button>
+                </Box>
+              </Box>
+            )}
+
+            {/* Video Overlay Controls - Only show when video exists and not loading/error */}
+            {currentSlideData.videoUrl && !isVideoLoading && !videoError && (
               <Box
                 sx={{
                   position: 'absolute',
