@@ -63,8 +63,6 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
   const [videoError, setVideoError] = useState<string | null>(null);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
-  const [showVideoControls, setShowVideoControls] = useState(true);
-  const [videoControlsTimeout, setVideoControlsTimeout] = useState<NodeJS.Timeout | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
@@ -449,30 +447,6 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
     }
   };
 
-  const showControlsTemporarily = () => {
-    setShowVideoControls(true);
-    if (videoControlsTimeout) {
-      clearTimeout(videoControlsTimeout);
-    }
-    const timeout = setTimeout(() => {
-      setShowVideoControls(false);
-    }, 3000);
-    setVideoControlsTimeout(timeout);
-  };
-
-  const handleVideoMouseMove = () => {
-    showControlsTemporarily();
-  };
-
-  const handleVideoMouseLeave = () => {
-    if (videoControlsTimeout) {
-      clearTimeout(videoControlsTimeout);
-    }
-    const timeout = setTimeout(() => {
-      setShowVideoControls(false);
-    }, 1000);
-    setVideoControlsTimeout(timeout);
-  };
 
   const currentSlideData = slides[currentSlide];
   
@@ -484,17 +458,6 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
     console.log(`🎯 Video Key: video-${currentSlide}-${currentSlideData.id}`);
   }, [currentSlide, currentSlideData]);
 
-  // Auto-hide controls when video starts playing
-  useEffect(() => {
-    if (isVideoPlaying) {
-      const timeout = setTimeout(() => {
-        setShowVideoControls(false);
-      }, 2000);
-      return () => clearTimeout(timeout);
-    } else {
-      setShowVideoControls(true);
-    }
-  }, [isVideoPlaying]);
 
   return (
     <Box
@@ -820,15 +783,13 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                   poster={currentSlideData.videoPoster}
                   muted={isVideoMuted}
                   preload="metadata"
-                  controls={showVideoControls}
-                  onMouseMove={handleVideoMouseMove}
-                  onMouseLeave={handleVideoMouseLeave}
+                  controls={true}
                   style={{
                     objectFit: 'contain',
                     borderRadius: '12px',
                     backgroundColor: '#000',
-                    aspectRatio: '9/16', // Portrait aspect ratio
-                    maxHeight: '80vh', // Limit height for better fit
+                    width: '100%',
+                    height: 'auto',
                   }}
                   onLoadStart={() => {
                     setIsVideoLoading(true);
@@ -982,81 +943,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
               </Box>
             )}
 
-            {/* Video Overlay Controls - Only show when video exists and not loading/error */}
-            {currentSlideData.videoUrl && !isVideoLoading && !videoError && (
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.3) 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  opacity: isVideoPlaying ? 0 : 1,
-                  transition: 'opacity 0.3s ease',
-                  '&:hover': {
-                    opacity: 1,
-                  },
-                }}
-              >
-                <IconButton
-                  onClick={isVideoPlaying ? handlePause : handlePlay}
-                  sx={{
-                    backgroundColor: 'rgba(217, 176, 140, 0.9)',
-                    color: '#010E0E',
-                    width: 80,
-                    height: 80,
-                    '&:hover': {
-                      backgroundColor: 'rgba(217, 176, 140, 1)',
-                    },
-                  }}
-                >
-                  {isVideoPlaying ? <PauseIcon sx={{ fontSize: 40 }} /> : <PlayIcon sx={{ fontSize: 40 }} />}
-                </IconButton>
-              </Box>
-            )}
 
-            {/* Video Controls - Only show when video exists */}
-            {currentSlideData.videoUrl && (
-              <Box
-                sx={{
-                  position: 'absolute',
-                  bottom: 16,
-                  right: 16,
-                  display: 'flex',
-                  gap: 1,
-                  opacity: 0.8,
-                }}
-              >
-                <IconButton
-                  onClick={handleVideoToggle}
-                  sx={{
-                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                    color: '#D1E8E2',
-                    '&:hover': {
-                      backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                    },
-                  }}
-                >
-                  {isVideoMuted ? <VolumeOffIcon /> : <VolumeIcon />}
-                </IconButton>
-                <IconButton
-                  onClick={handlePictureInPicture}
-                  sx={{
-                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                    color: '#D1E8E2',
-                    '&:hover': {
-                      backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                    },
-                  }}
-                >
-                  <PictureInPictureIcon />
-                </IconButton>
-              </Box>
-            )}
           </Box>
 
           {/* Video Info */}
