@@ -88,7 +88,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         '40% Yield Increase',
         '95% Accuracy Rate'
       ],
-      videoUrl: '/videos/optimized/maono-intro.mp4',
+      videoUrl: 'https://ptewdrb0fmlmvmtc.public.blob.vercel-storage.com/maono-intro.mp4',
       videoPoster: '/images/maono-intro-poster.jpg',
       duration: 8000,
       callToAction: 'Join the Agricultural Revolution'
@@ -111,7 +111,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         'Only 4% of arable land irrigated',
         'Post-harvest losses up to 30%'
       ],
-      videoUrl: '/videos/optimized/agricultural-challenges.mp4',
+      videoUrl: 'https://ptewdrb0fmlmvmtc.public.blob.vercel-storage.com/agricultural-challenges.mp4',
       videoPoster: '/images/challenges-poster.jpg',
       duration: 10000,
       callToAction: 'See How MAONO Solves These Problems'
@@ -134,7 +134,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         'AI Disease Detection',
         'Mobile-First Design'
       ],
-      videoUrl: '/videos/optimized/maono-solution.mp4',
+      videoUrl: 'https://ptewdrb0fmlmvmtc.public.blob.vercel-storage.com/maono-solution.mp4',
       videoPoster: '/images/solution-poster.jpg',
       duration: 12000,
       callToAction: 'Experience the Future of Farming'
@@ -157,7 +157,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         'IoT Sensor Networks',
         'Blockchain Technology'
       ],
-      videoUrl: '/videos/optimized/technology-stack.mp4',
+      videoUrl: 'https://ptewdrb0fmlmvmtc.public.blob.vercel-storage.com/technology-stack.mp4',
       videoPoster: '/images/technology-poster.jpg',
       duration: 10000,
       callToAction: 'Explore Our Technology'
@@ -180,7 +180,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         'Personal Farm Expert',
         'Blockchain Fair Pricing'
       ],
-      videoUrl: '/videos/optimized/impact-stories.mp4',
+      videoUrl: 'https://ptewdrb0fmlmvmtc.public.blob.vercel-storage.com/impact-stories.mp4',
       videoPoster: '/images/impact-poster.jpg',
       duration: 12000,
       callToAction: 'Join Our Success Stories'
@@ -203,7 +203,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         'Government Partnerships',
         'Data Marketplace'
       ],
-      videoUrl: '/videos/optimized/future-vision.mp4',
+      videoUrl: 'https://ptewdrb0fmlmvmtc.public.blob.vercel-storage.com/future-vision.mp4',
       videoPoster: '/images/future-poster.jpg',
       duration: 10000,
       callToAction: 'Be Part of the Future'
@@ -243,7 +243,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
     }
   }, [isPlaying, currentSlide]);
 
-  // Video synchronization - optimized for faster loading
+  // Video synchronization - force reload on slide change
   useEffect(() => {
     // Clear any existing timers first
     if (progressRef.current) {
@@ -255,35 +255,25 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
       setIsVideoLoading(true);
       setVideoError(null);
       
+      // Force video reload on slide change
+      console.log(`🔄 Forcing video reload for slide ${currentSlide + 1}`);
+      videoRef.current.load();
+      
       if (isPlaying) {
-        // Don't reset video if it's already loaded
-        if (videoRef.current.readyState >= 2) {
-          videoRef.current.currentTime = 0;
-          videoRef.current.play().catch(error => {
-            console.error('Video play error:', error);
-            setVideoError('Failed to play video');
-            setIsVideoLoading(false);
-          });
-        } else {
-          // Only load if not already loaded
-          videoRef.current.load();
-          
-          // Faster loading check
-          const playVideo = () => {
-            if (videoRef.current && videoRef.current.readyState >= 1) {
-              videoRef.current.currentTime = 0;
-              videoRef.current.play().catch(error => {
-                console.error('Video play error:', error);
-                setVideoError('Failed to play video');
-                setIsVideoLoading(false);
-              });
-            } else {
-              setTimeout(playVideo, 50); // Reduced from 200ms to 50ms
-            }
-          };
-          
-          setTimeout(playVideo, 10); // Reduced from 100ms to 10ms
-        }
+        const playVideo = () => {
+          if (videoRef.current && videoRef.current.readyState >= 1) {
+            videoRef.current.currentTime = 0;
+            videoRef.current.play().catch(error => {
+              console.error('Video play error:', error);
+              setVideoError('Failed to play video');
+              setIsVideoLoading(false);
+            });
+          } else {
+            setTimeout(playVideo, 100);
+          }
+        };
+        
+        setTimeout(playVideo, 200);
       } else {
         videoRef.current.pause();
         setIsVideoPlaying(false);
@@ -292,7 +282,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
     
     // Reset progress when slide changes
     setProgress(0);
-  }, [isPlaying, currentSlide]);
+  }, [isPlaying, currentSlide, currentSlideData.videoUrl]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -464,6 +454,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
     console.log(`🎬 Slide ${currentSlide + 1}: ${currentSlideData.title}`);
     console.log(`📹 Video URL: ${currentSlideData.videoUrl}`);
     console.log(`🆔 Slide ID: ${currentSlideData.id}`);
+    console.log(`🎯 Video Key: video-${currentSlide}-${currentSlideData.id}`);
   }, [currentSlide, currentSlideData]);
 
   return (
@@ -783,6 +774,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
               >
                 {/* Use your actual local videos */}
                 <video
+                  key={`video-${currentSlide}-${currentSlideData.id}`}
                   ref={videoRef}
                   width="100%"
                   height="100%"
@@ -791,8 +783,9 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                   preload="metadata"
                   controls
                   style={{
-                    objectFit: 'cover',
+                    objectFit: 'contain',
                     borderRadius: '12px',
+                    backgroundColor: '#000',
                   }}
                   onLoadStart={() => {
                     setIsVideoLoading(true);
@@ -1033,6 +1026,9 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                 📹 Video: {currentSlideData.videoUrl.split('/').pop()}
               </Typography>
             )}
+            <Typography variant="caption" sx={{ color: '#8A9B9B', display: 'block', mt: 0.5 }}>
+              🎯 Slide {currentSlide + 1} of {slides.length} - {currentSlideData.id}
+            </Typography>
             <Typography variant="caption" sx={{ color: '#8A9B9B' }}>
               {currentSlideData.videoUrl 
                 ? 'Click to play/pause • Use controls for volume and picture-in-picture'
