@@ -205,11 +205,13 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
     }
   ];
 
-  // Auto-play functionality
+  // Auto-play functionality - only for slides without videos
   useEffect(() => {
-    if (isPlaying) {
-      const slide = slides[currentSlide];
-      const duration = slide.duration;
+    const currentSlideData = slides[currentSlide];
+    
+    // Only use timer for slides without videos
+    if (isPlaying && !currentSlideData.videoUrl) {
+      const duration = currentSlideData.duration;
       const interval = 50;
       const increment = (interval / duration) * 100;
 
@@ -240,6 +242,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
   useEffect(() => {
     if (videoRef.current) {
       if (isPlaying) {
+        videoRef.current.currentTime = 0; // Reset video to beginning
         videoRef.current.play();
         setIsVideoPlaying(true);
       } else {
@@ -247,6 +250,8 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         setIsVideoPlaying(false);
       }
     }
+    // Reset progress when slide changes
+    setProgress(0);
   }, [isPlaying, currentSlide]);
 
   // Keyboard navigation
@@ -721,9 +726,17 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
                 }}
                 onPlay={() => setIsVideoPlaying(true)}
                 onPause={() => setIsVideoPlaying(false)}
+                onTimeUpdate={() => {
+                  if (videoRef.current) {
+                    const progress = (videoRef.current.currentTime / videoRef.current.duration) * 100;
+                    setProgress(progress);
+                  }
+                }}
                 onEnded={() => {
                   if (currentSlide < slides.length - 1) {
                     handleNextSlide();
+                  } else {
+                    handleFinishPresentation();
                   }
                 }}
               >
