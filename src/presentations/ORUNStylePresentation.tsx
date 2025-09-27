@@ -98,7 +98,7 @@ const ORUNStylePresentation: React.FC<ORUNStylePresentationProps> = ({ onClose, 
     },
   ];
 
-  // Load Three.js dynamically
+  // Load Three.js dynamically with fallback
   useEffect(() => {
     const loadThreeJS = () => {
       if (window.THREE) {
@@ -106,12 +106,34 @@ const ORUNStylePresentation: React.FC<ORUNStylePresentationProps> = ({ onClose, 
         return;
       }
 
-      const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
-      script.onload = () => {
-        setGlobeLoaded(true);
+      // Try multiple CDNs for better reliability
+      const cdnUrls = [
+        'https://unpkg.com/three@0.159.0/build/three.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/three.js/r159/three.min.js',
+        'https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js'
+      ];
+
+      let currentIndex = 0;
+      const tryLoadScript = () => {
+        if (currentIndex >= cdnUrls.length) {
+          console.warn('Failed to load Three.js from all CDNs, using fallback');
+          setGlobeLoaded(true); // Still show the presentation without 3D
+          return;
+        }
+
+        const script = document.createElement('script');
+        script.src = cdnUrls[currentIndex];
+        script.onload = () => {
+          setGlobeLoaded(true);
+        };
+        script.onerror = () => {
+          currentIndex++;
+          tryLoadScript();
+        };
+        document.head.appendChild(script);
       };
-      document.head.appendChild(script);
+
+      tryLoadScript();
     };
 
     loadThreeJS();
@@ -499,11 +521,139 @@ const ORUNStylePresentation: React.FC<ORUNStylePresentationProps> = ({ onClose, 
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
                 textAlign: 'center',
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
               <LinearProgress sx={{ mb: 2, width: 200 }} />
-              <Typography variant="body2" sx={{ color: '#D9B08C' }}>
+              <Typography variant="body2" sx={{ color: '#D9B08C', mb: 2 }}>
                 Loading 3D Globe...
+              </Typography>
+              <Typography variant="caption" sx={{ color: '#8A9B9B' }}>
+                If this takes too long, the presentation will continue with enhanced visuals
+              </Typography>
+            </Box>
+          )}
+          
+          {/* Fallback visualization when Three.js fails */}
+          {globeLoaded && !globeRef.current && (
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                background: 'radial-gradient(circle, rgba(17, 100, 102, 0.1) 0%, transparent 70%)',
+              }}
+            >
+              {/* Animated network visualization */}
+              <Box
+                sx={{
+                  position: 'relative',
+                  width: '300px',
+                  height: '300px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                {/* Central node */}
+                <Box
+                  sx={{
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #116466 0%, #D9B08C 100%)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    animation: 'pulse 2s infinite',
+                    '@keyframes pulse': {
+                      '0%': { transform: 'scale(1)', opacity: 1 },
+                      '50%': { transform: 'scale(1.1)', opacity: 0.8 },
+                      '100%': { transform: 'scale(1)', opacity: 1 },
+                    },
+                  }}
+                >
+                  <Typography variant="h6" sx={{ color: '#010E0E', fontWeight: 'bold' }}>
+                    MAONO
+                  </Typography>
+                </Box>
+                
+                {/* Network nodes */}
+                {[...Array(12)].map((_, i) => {
+                  const angle = (i * 30) * (Math.PI / 180);
+                  const radius = 120;
+                  const x = Math.cos(angle) * radius;
+                  const y = Math.sin(angle) * radius;
+                  
+                  return (
+                    <Box
+                      key={i}
+                      sx={{
+                        position: 'absolute',
+                        width: '20px',
+                        height: '20px',
+                        borderRadius: '50%',
+                        backgroundColor: '#D9B08C',
+                        left: `calc(50% + ${x}px - 10px)`,
+                        top: `calc(50% + ${y}px - 10px)`,
+                        animation: `float ${2 + i * 0.1}s ease-in-out infinite`,
+                        animationDelay: `${i * 0.1}s`,
+                        '@keyframes float': {
+                          '0%, 100%': { transform: 'translateY(0px)', opacity: 0.7 },
+                          '50%': { transform: 'translateY(-10px)', opacity: 1 },
+                        },
+                      }}
+                    />
+                  );
+                })}
+                
+                {/* Connection lines */}
+                {[...Array(12)].map((_, i) => {
+                  const angle = (i * 30) * (Math.PI / 180);
+                  const radius = 120;
+                  const x = Math.cos(angle) * radius;
+                  const y = Math.sin(angle) * radius;
+                  
+                  return (
+                    <Box
+                      key={`line-${i}`}
+                      sx={{
+                        position: 'absolute',
+                        width: '2px',
+                        height: `${radius}px`,
+                        backgroundColor: 'rgba(217, 176, 140, 0.3)',
+                        left: '50%',
+                        top: '50%',
+                        transformOrigin: 'top center',
+                        transform: `rotate(${i * 30}deg) translateX(-1px)`,
+                        animation: `glow ${3 + i * 0.1}s ease-in-out infinite`,
+                        animationDelay: `${i * 0.1}s`,
+                        '@keyframes glow': {
+                          '0%, 100%': { opacity: 0.3 },
+                          '50%': { opacity: 0.8 },
+                        },
+                      }}
+                    />
+                  );
+                })}
+              </Box>
+              
+              <Typography variant="h6" sx={{ color: '#D9B08C', mt: 2, textAlign: 'center' }}>
+                Global Agricultural Network
+              </Typography>
+              <Typography variant="body2" sx={{ color: '#8A9B9B', mt: 1, textAlign: 'center' }}>
+                Connecting farmers worldwide through advanced technology
               </Typography>
             </Box>
           )}
