@@ -39,12 +39,12 @@ const HomeScreen: React.FC = () => {
   const [currentPresentation, setCurrentPresentation] = useState<string | null>(null);
   const [isFirstVisit, setIsFirstVisit] = useState(false);
   
-  // Check if this is a first visit and show presentation
+  // Check if this is a first visit and show presentation selection
   useEffect(() => {
     const hasSeenPresentation = localStorage.getItem('maono-presentation-seen');
     if (!hasSeenPresentation) {
       setIsFirstVisit(true);
-      setCurrentPresentation('orun-style-presentation');
+      setShowPresentations(true); // Show presentation selection instead of auto-loading
     }
   }, []);
 
