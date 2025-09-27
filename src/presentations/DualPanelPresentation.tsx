@@ -282,7 +282,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
     
     // Reset progress when slide changes
     setProgress(0);
-  }, [isPlaying, currentSlide, currentSlideData.videoUrl]);
+  }, [isPlaying, currentSlide]);
 
   // Keyboard navigation
   useEffect(() => {
