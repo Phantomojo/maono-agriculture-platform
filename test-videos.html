@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAONO Video Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #010E0E;
+            color: #D1E8E2;
+            padding: 20px;
+        }
+        .video-container {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #116466;
+            border-radius: 8px;
+        }
+        video {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+        }
+        h2 {
+            color: #D9B08C;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎬 MAONO Video Test</h1>
+    <p>Testing all 6 presentation videos:</p>
+    
+    <div class="video-container">
+        <h2>1. MAONO Introduction</h2>
+        <video controls>
+            <source src="/videos/maono-intro.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    
+    <div class="video-container">
+        <h2>2. Agricultural Challenges</h2>
+        <video controls>
+            <source src="/videos/agricultural-challenges.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    
+    <div class="video-container">
+        <h2>3. MAONO Solution</h2>
+        <video controls>
+            <source src="/videos/maono-solution.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    
+    <div class="video-container">
+        <h2>4. Technology Stack</h2>
+        <video controls>
+            <source src="/videos/technology-stack.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    
+    <div class="video-container">
+        <h2>5. Impact Stories</h2>
+        <video controls>
+            <source src="/videos/impact-stories.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    
+    <div class="video-container">
+        <h2>6. Future Vision</h2>
+        <video controls>
+            <source src="/videos/future-vision.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    
+    <script>
+        // Test video loading
+        const videos = document.querySelectorAll('video');
+        videos.forEach((video, index) => {
+            video.addEventListener('loadstart', () => {
+                console.log(`Video ${index + 1} started loading`);
+            });
+            video.addEventListener('canplay', () => {
+                console.log(`Video ${index + 1} can play`);
+            });
+            video.addEventListener('error', (e) => {
+                console.error(`Video ${index + 1} error:`, e);
+            });
+        });
+    </script>
+</body>
+</html>

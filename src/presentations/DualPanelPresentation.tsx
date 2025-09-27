@@ -458,6 +458,13 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
   };
 
   const currentSlideData = slides[currentSlide];
+  
+  // Debug: Log current slide and video URL
+  useEffect(() => {
+    console.log(`🎬 Slide ${currentSlide + 1}: ${currentSlideData.title}`);
+    console.log(`📹 Video URL: ${currentSlideData.videoUrl}`);
+    console.log(`🆔 Slide ID: ${currentSlideData.id}`);
+  }, [currentSlide, currentSlideData]);
 
   return (
     <Box
@@ -1021,6 +1028,11 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
             <Typography variant="body2" sx={{ color: '#D9B08C', fontWeight: 600 }}>
               {currentSlideData.title} - {currentSlideData.videoUrl ? 'Video Presentation' : 'Content Presentation'}
             </Typography>
+            {currentSlideData.videoUrl && (
+              <Typography variant="caption" sx={{ color: '#6EE7B7', display: 'block', mt: 0.5 }}>
+                📹 Video: {currentSlideData.videoUrl.split('/').pop()}
+              </Typography>
+            )}
             <Typography variant="caption" sx={{ color: '#8A9B9B' }}>
               {currentSlideData.videoUrl 
                 ? 'Click to play/pause • Use controls for volume and picture-in-picture'
