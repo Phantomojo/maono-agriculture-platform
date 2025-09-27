@@ -358,22 +358,23 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         </Box>
       </Box>
 
-      {/* Main Content - Dual Panel Layout */}
+      {/* Main Content - Full Width Layout */}
       <Box
         sx={{
           flex: 1,
           display: 'flex',
           height: 'calc(100vh - 140px)',
           overflow: 'hidden',
+          position: 'relative',
         }}
       >
-        {/* Left Panel - Text Content */}
+        {/* Left Panel - Text Content (Full Width) */}
         <Box
           sx={{
             flex: 1,
             display: 'flex',
             flexDirection: 'column',
-            p: 3,
+            p: 4,
             overflowY: 'auto',
             background: 'rgba(44, 53, 49, 0.25)',
             backdropFilter: 'blur(15px)',
@@ -382,6 +383,7 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
             borderRadius: '16px',
             m: 2,
             mr: 1,
+            position: 'relative',
           }}
         >
           <Fade in={true} timeout={1000}>
@@ -505,10 +507,59 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
           </Fade>
         </Box>
 
-        {/* Right Panel - Video */}
+        {/* Corner Navigation Buttons */}
+        <IconButton
+          onClick={handlePrevSlide}
+          disabled={currentSlide === 0}
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: 20,
+            transform: 'translateY(-50%)',
+            backgroundColor: 'rgba(17, 100, 102, 0.8)',
+            color: '#D1E8E2',
+            width: 50,
+            height: 50,
+            '&:hover': {
+              backgroundColor: 'rgba(17, 100, 102, 1)',
+            },
+            '&:disabled': {
+              backgroundColor: 'rgba(44, 53, 49, 0.5)',
+              color: '#8A9B9B',
+            },
+          }}
+        >
+          <ArrowBackIcon />
+        </IconButton>
+
+        <IconButton
+          onClick={handleNextSlide}
+          disabled={currentSlide === slides.length - 1}
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            right: 20,
+            transform: 'translateY(-50%)',
+            backgroundColor: 'rgba(17, 100, 102, 0.8)',
+            color: '#D1E8E2',
+            width: 50,
+            height: 50,
+            '&:hover': {
+              backgroundColor: 'rgba(17, 100, 102, 1)',
+            },
+            '&:disabled': {
+              backgroundColor: 'rgba(44, 53, 49, 0.5)',
+              color: '#8A9B9B',
+            },
+          }}
+        >
+          <ArrowForwardIcon />
+        </IconButton>
+
+        {/* Right Panel - Video (Smaller) */}
         <Box
           sx={{
-            flex: 1,
+            width: '400px',
             display: 'flex',
             flexDirection: 'column',
             p: 2,
@@ -640,124 +691,42 @@ const DualPanelPresentation: React.FC<DualPanelPresentationProps> = ({ onClose, 
         </Box>
       </Box>
 
-      {/* Bottom Controls */}
+      {/* Slide Progress Indicator */}
       <Box
         sx={{
-          p: 2,
-          background: 'rgba(1, 14, 14, 0.9)',
-          backdropFilter: 'blur(15px)',
-          borderTop: '1px solid rgba(217, 176, 140, 0.2)',
+          position: 'absolute',
+          bottom: 20,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          display: 'flex',
+          gap: 1,
+          backgroundColor: 'rgba(1, 14, 14, 0.8)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '20px',
+          p: 1,
         }}
       >
-        {/* Progress Bar */}
-        <Box sx={{ mb: 2 }}>
-          <LinearProgress
-            variant="determinate"
-            value={progress}
+        {slides.map((_, index) => (
+          <Box
+            key={index}
+            onClick={() => {
+              setCurrentSlide(index);
+              setProgress(0);
+            }}
             sx={{
-              height: 8,
-              borderRadius: 4,
-              backgroundColor: 'rgba(44, 53, 49, 0.5)',
-              '& .MuiLinearProgress-bar': {
-                backgroundColor: '#D9B08C',
-                borderRadius: 4,
+              width: 12,
+              height: 12,
+              borderRadius: '50%',
+              backgroundColor: index === currentSlide ? '#D9B08C' : 'rgba(217, 176, 140, 0.3)',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                backgroundColor: index === currentSlide ? '#E5C4A0' : 'rgba(217, 176, 140, 0.5)',
+                transform: 'scale(1.2)',
               },
             }}
           />
-          <Typography variant="caption" sx={{ mt: 1, display: 'block', color: '#D9B08C', textAlign: 'center' }}>
-            Slide {currentSlide + 1} of {slides.length} • {Math.round(progress)}% Complete
-          </Typography>
-        </Box>
-
-        {/* Controls */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 2 }}>
-          <Button
-            variant="contained"
-            startIcon={isPlaying ? <PauseIcon /> : <PlayIcon />}
-            onClick={isPlaying ? handlePause : handlePlay}
-            sx={{
-              backgroundColor: '#D9B08C',
-              color: '#010E0E',
-              '&:hover': {
-                backgroundColor: '#E5C4A0',
-              },
-            }}
-          >
-            {isPlaying ? 'Pause' : 'Play'}
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<StopIcon />}
-            onClick={handleStop}
-            sx={{
-              borderColor: '#116466',
-              color: '#D1E8E2',
-              '&:hover': {
-                borderColor: '#2A7A7C',
-                backgroundColor: 'rgba(17, 100, 102, 0.1)',
-              },
-            }}
-          >
-            Stop
-          </Button>
-        </Box>
-
-        {/* Navigation */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 2 }}>
-          <Button
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-            onClick={handlePrevSlide}
-            disabled={currentSlide === 0}
-            sx={{
-              borderColor: '#116466',
-              color: '#D1E8E2',
-              '&:hover': {
-                borderColor: '#2A7A7C',
-                backgroundColor: 'rgba(17, 100, 102, 0.1)',
-              },
-            }}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="contained"
-            endIcon={<ArrowForwardIcon />}
-            onClick={handleNextSlide}
-            disabled={currentSlide === slides.length - 1}
-            sx={{
-              backgroundColor: '#D9B08C',
-              color: '#010E0E',
-              '&:hover': {
-                backgroundColor: '#E5C4A0',
-              },
-            }}
-          >
-            Next
-          </Button>
-        </Box>
-
-        {/* Slide Navigation */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
-          {slides.map((_, index) => (
-            <Chip
-              key={index}
-              label={index + 1}
-              size="small"
-              onClick={() => {
-                setCurrentSlide(index);
-                setProgress(0);
-              }}
-              sx={{
-                backgroundColor: index === currentSlide ? '#D9B08C' : 'rgba(44, 53, 49, 0.5)',
-                color: index === currentSlide ? '#010E0E' : '#D1E8E2',
-                '&:hover': {
-                  backgroundColor: index === currentSlide ? '#E5C4A0' : 'rgba(17, 100, 102, 0.3)',
-                },
-              }}
-            />
-          ))}
-        </Box>
+        ))}
       </Box>
     </Box>
   );
